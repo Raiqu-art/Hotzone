@@ -748,7 +748,8 @@ FILME"
             ></textarea>
 
             <div class="small">
-                Pro Runde wird zufällig eine Kategorie ausgewählt.
+                Jede Kategorie wird einmal verwendet,
+                bevor sich Kategorien wiederholen.
             </div>
 
             <button onclick="createGame()">
@@ -1249,11 +1250,6 @@ FILME"
             class="clue"
         ></div>
 
-
-        <!-- ==========================================
-             ZWISCHENÜBERSICHT
-        =========================================== -->
-
         <div class="section-heading">
 
             <h3>
@@ -1269,11 +1265,6 @@ FILME"
         <div
             id="answerOverview"
         ></div>
-
-
-        <!-- ==========================================
-             LEADERBOARD
-        =========================================== -->
 
         <div class="section-heading">
 
@@ -2156,17 +2147,76 @@ FILME"
                 ];
 
 
+        /*
+         * Jede Kategorie soll pro Durchlauf
+         * genau einmal verwendet werden.
+         *
+         * Wir speichern bereits verwendete
+         * Kategorien in der aktuellen Lobby
+         * über currentGame.used_categories.
+         */
+
+        let usedCategories =
+            Array.isArray(
+                currentGame.used_categories
+            )
+                ? currentGame.used_categories
+                : [];
+
+
+        /*
+         * Falls sich die Kategorien geändert
+         * haben oder alte Kategorien nicht mehr
+         * existieren, werden sie entfernt.
+         */
+
+        usedCategories =
+            usedCategories.filter(
+                category =>
+                    categories.includes(category)
+            );
+
+
+        /*
+         * Wenn alle Kategorien bereits einmal
+         * verwendet wurden, beginnt ein neuer
+         * Durchlauf.
+         */
+
+        if (
+            usedCategories.length >=
+            categories.length
+        ) {
+
+            usedCategories =
+                [];
+        }
+
+
+        /*
+         * Nur Kategorien auswählen, die in diesem
+         * Durchlauf noch nicht verwendet wurden.
+         */
+
         let availableCategories =
             categories.filter(
                 category =>
-                    category !==
-                    currentGame.category
+                    !usedCategories.includes(
+                        category
+                    )
             );
 
+
+        /*
+         * Sicherheitsfallback.
+         */
 
         if (
             availableCategories.length === 0
         ) {
+
+            usedCategories =
+                [];
 
             availableCategories =
                 categories;
@@ -2179,6 +2229,18 @@ FILME"
                     Math.random() *
                     availableCategories.length
                 )
+            ];
+
+
+        /*
+         * Die gerade ausgewählte Kategorie
+         * wird sofort als verwendet gespeichert.
+         */
+
+        const newUsedCategories =
+            [
+                ...usedCategories,
+                randomCategory
             ];
 
 
@@ -2238,6 +2300,12 @@ FILME"
 
                     category:
                         randomCategory,
+
+                    categories:
+                        categories,
+
+                    used_categories:
+                        newUsedCategories,
 
                     secret_number:
                         randomNumber,
@@ -3236,13 +3304,6 @@ FILME"
         }
 
 
-        /*
-         * Der Spieler, der den Hinweis gegeben hat,
-         * bekommt die Bonuspunkte.
-         *
-         * NICHT automatisch der Host.
-         */
-
         const clueGiver =
             players.find(
                 p =>
@@ -3522,13 +3583,6 @@ FILME"
             currentGame.clue ||
             "Kein Hinweis";
 
-
-        /*
-         * Jeder Spieler berechnet die Punkte
-         * selbst aus den öffentlich vorhandenen
-         * Rundendaten. Dadurch sehen auch die
-         * Mitspieler ihre echten +Punkte.
-         */
 
         roundPoints =
             calculateRoundPoints();
