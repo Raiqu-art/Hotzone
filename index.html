@@ -220,10 +220,6 @@
             color: #101114;
         }
 
-        /* =========================
-           GAME HEADER
-        ========================= */
-
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -280,10 +276,6 @@
             white-space: nowrap;
         }
 
-        /* =========================
-           PLAYER LIST
-        ========================= */
-
         .player {
             display: flex;
             align-items: center;
@@ -330,10 +322,6 @@
             background: white;
             color: black;
         }
-
-        /* =========================
-           ROUND
-        ========================= */
 
         .round-title {
             text-align: center;
@@ -395,10 +383,6 @@
             margin: 15px 0;
         }
 
-        /* =========================
-           COUNTER
-        ========================= */
-
         .counter {
             background: #252830;
             border: 1px solid var(--border);
@@ -424,10 +408,6 @@
             background: #1c2b22;
         }
 
-        /* =========================
-           NUMBER GRID
-        ========================= */
-
         .number-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -451,10 +431,6 @@
             border-color: white;
         }
 
-        /* =========================
-           HOST PANEL
-        ========================= */
-
         .host-panel {
             margin-top: 22px;
             padding: 20px;
@@ -467,10 +443,6 @@
             font-weight: 900;
             margin-bottom: 5px;
         }
-
-        /* =========================
-           RESULT
-        ========================= */
 
         .result-hero {
             text-align: center;
@@ -569,10 +541,6 @@
             margin-bottom: 8px;
         }
 
-        /* =========================
-           MOBILE
-        ========================= */
-
         @media (max-width: 600px) {
 
             .container {
@@ -626,10 +594,6 @@
 <body>
 
 <div class="container">
-
-    <!-- ==========================================
-         START
-    =========================================== -->
 
     <div id="startScreen">
 
@@ -757,10 +721,6 @@ FILME"
     </div>
 
 
-    <!-- ==========================================
-         JOIN
-    =========================================== -->
-
     <div
         id="joinScreen"
         class="card hidden"
@@ -807,10 +767,6 @@ FILME"
 
     </div>
 
-
-    <!-- ==========================================
-         LOBBY
-    =========================================== -->
 
     <div
         id="lobbyScreen"
@@ -883,10 +839,6 @@ FILME"
     </div>
 
 
-    <!-- ==========================================
-         SECRET PLAYER
-    =========================================== -->
-
     <div
         id="secretScreen"
         class="card hidden"
@@ -941,10 +893,6 @@ FILME"
     </div>
 
 
-    <!-- ==========================================
-         SECRET WAITING
-    =========================================== -->
-
     <div
         id="secretWaitingScreen"
         class="card hidden"
@@ -986,10 +934,6 @@ FILME"
 
     </div>
 
-
-    <!-- ==========================================
-         GUESS
-    =========================================== -->
 
     <div
         id="guessScreen"
@@ -1088,10 +1032,6 @@ FILME"
     </div>
 
 
-    <!-- ==========================================
-         HOST SECRET
-    =========================================== -->
-
     <div
         id="hostSecretScreen"
         class="card hidden"
@@ -1182,10 +1122,6 @@ FILME"
     </div>
 
 
-    <!-- ==========================================
-         WAITING
-    =========================================== -->
-
     <div
         id="waitingScreen"
         class="card hidden"
@@ -1227,10 +1163,6 @@ FILME"
 
     </div>
 
-
-    <!-- ==========================================
-         RESULT
-    =========================================== -->
 
     <div
         id="resultScreen"
@@ -1334,10 +1266,6 @@ FILME"
 
 <script>
 
-    /* ==========================================
-       SUPABASE
-    =========================================== */
-
     const SUPABASE_URL =
         "https://odjomemslreozqtsaubk.supabase.co";
 
@@ -1351,10 +1279,6 @@ FILME"
         );
 
 
-    /* ==========================================
-       GAME STATE
-    =========================================== */
-
     let gameId = null;
     let playerId = null;
 
@@ -1367,10 +1291,6 @@ FILME"
 
     let roundPoints = {};
 
-
-    /* ==========================================
-       SCREEN MANAGEMENT
-    =========================================== */
 
     function hideAllScreens() {
 
@@ -1431,10 +1351,6 @@ FILME"
         renderLobby();
     }
 
-
-    /* ==========================================
-       GAME CODE
-    =========================================== */
 
     function generateGameCode() {
 
@@ -1503,10 +1419,6 @@ FILME"
         }
     }
 
-
-    /* ==========================================
-       CREATE GAME
-    =========================================== */
 
     async function createGame() {
 
@@ -1675,10 +1587,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       JOIN GAME
-    =========================================== */
-
     async function joinGame() {
 
         const code =
@@ -1792,10 +1700,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       REALTIME
-    =========================================== */
-
     function subscribeToGame() {
 
         supabaseClient
@@ -1847,10 +1751,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       LOAD PLAYERS
-    =========================================== */
-
     async function loadPlayers() {
 
         if (!gameId) return;
@@ -1889,10 +1789,6 @@ FILME"
         updateCounters();
     }
 
-
-    /* ==========================================
-       LOBBY
-    =========================================== */
 
     function renderLobby() {
 
@@ -2007,10 +1903,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       CURRENT PHASE
-    =========================================== */
-
     function renderCurrentPhase() {
 
         if (!currentGame) return;
@@ -2063,7 +1955,8 @@ FILME"
 
     /* ==========================================
        START ROUND
-    =========================================== */
+       KATEGORIE WIRD NICHT DIREKT WIEDERHOLT
+    ========================================== */
 
     async function startRound() {
 
@@ -2087,16 +1980,51 @@ FILME"
                 currentGame.categories
             )
                 ? currentGame.categories
+                    .map(x => String(x).trim())
+                    .filter(x => x.length > 0)
                 : [
                     "ATTRAKTIVITÄT"
                 ];
 
 
+        let availableCategories =
+            categories;
+
+
+        /*
+         * Wenn es mehrere Kategorien gibt,
+         * wird die aktuelle Kategorie entfernt.
+         * Dadurch wird dieselbe Kategorie nicht
+         * direkt in der nächsten Runde gewählt.
+         */
+        if (
+            categories.length > 1 &&
+            currentGame.category
+        ) {
+
+            const filteredCategories =
+                categories.filter(
+                    category =>
+                        category !==
+                        currentGame.category
+                );
+
+
+            if (
+                filteredCategories.length > 0
+            ) {
+
+                availableCategories =
+                    filteredCategories;
+            }
+        }
+
+
         const randomCategory =
-            categories[
+            availableCategories[
                 Math.floor(
                     Math.random() *
-                    categories.length
+                    availableCategories.length
                 )
             ];
 
@@ -2192,10 +2120,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       CLUE PHASE
-    =========================================== */
-
     function showCluePhase() {
 
         hideAllScreens();
@@ -2276,10 +2200,6 @@ FILME"
         }
     }
 
-
-    /* ==========================================
-       HOST SECRET
-    =========================================== */
 
     function showHostSecretScreen() {
 
@@ -2402,10 +2322,6 @@ FILME"
         updateCounters();
     }
 
-
-    /* ==========================================
-       SEND CLUE
-    =========================================== */
 
     async function sendClue() {
 
@@ -2547,10 +2463,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       GUESS PHASE
-    =========================================== */
-
     function showGuessPhase() {
 
         const secretPlayer =
@@ -2685,10 +2597,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       NUMBER BUTTONS
-    =========================================== */
-
     function createNumberButtons() {
 
         const grid =
@@ -2738,10 +2646,6 @@ FILME"
         }
     }
 
-
-    /* ==========================================
-       SELECT GUESS
-    =========================================== */
 
     function selectGuess(number) {
 
@@ -2793,10 +2697,6 @@ FILME"
         createNumberButtons();
     }
 
-
-    /* ==========================================
-       CONFIRM GUESS
-    =========================================== */
 
     async function confirmGuess() {
 
@@ -2869,10 +2769,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       LOCK GUESS
-    =========================================== */
-
     function lockGuess() {
 
         const me =
@@ -2938,10 +2834,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       UNLOCK GUESS
-    =========================================== */
-
     function unlockGuess() {
 
         document
@@ -2971,10 +2863,6 @@ FILME"
             .add("hidden");
     }
 
-
-    /* ==========================================
-       COUNTERS
-    =========================================== */
 
     function updateCounters() {
 
@@ -3069,12 +2957,15 @@ FILME"
 
     /* ==========================================
        CALCULATE ROUND POINTS
-    =========================================== */
+       0 / 1 / 3 PUNKTE
+    ========================================== */
 
     function calculateRoundPoints() {
 
         const secretNumber =
-            currentGame.secret_number;
+            Number(
+                currentGame.secret_number
+            );
 
 
         const result = {};
@@ -3107,13 +2998,20 @@ FILME"
                 player.guess === undefined
             ) {
 
+                result[player.id] =
+                    0;
+
                 continue;
             }
 
 
+            const guess =
+                Number(player.guess);
+
+
             const difference =
                 Math.abs(
-                    player.guess -
+                    guess -
                     secretNumber
                 );
 
@@ -3131,6 +3029,15 @@ FILME"
 
                 result[player.id] =
                     1;
+
+            } else {
+
+                /*
+                 * 2 oder mehr daneben
+                 * = 0 Punkte
+                 */
+                result[player.id] =
+                    0;
             }
         }
 
@@ -3138,8 +3045,8 @@ FILME"
         const host =
             players.find(
                 p =>
-                    p.id ===
-                    playerId
+                    p.role ===
+                    "host"
             );
 
 
@@ -3162,9 +3069,13 @@ FILME"
                 }
 
 
+                const guess =
+                    Number(player.guess);
+
+
                 const difference =
                     Math.abs(
-                        player.guess -
+                        guess -
                         secretNumber
                     );
 
@@ -3180,6 +3091,14 @@ FILME"
                 ) {
 
                     hostPoints += 1;
+
+                } else {
+
+                    /*
+                     * 2 oder mehr daneben
+                     * = keine Host-Punkte
+                     */
+                    hostPoints += 0;
                 }
             }
 
@@ -3193,10 +3112,6 @@ FILME"
         return result;
     }
 
-
-    /* ==========================================
-       REVEAL RESULT
-    =========================================== */
 
     async function revealResult() {
 
@@ -3287,10 +3202,6 @@ FILME"
         await loadPlayers();
     }
 
-
-    /* ==========================================
-       RESULT SCREEN
-    =========================================== */
 
     async function showResult() {
 
@@ -3398,10 +3309,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       LEADERBOARD
-    =========================================== */
-
     function renderLeaderboard() {
 
         const container =
@@ -3481,10 +3388,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       NEXT ROUND
-    =========================================== */
-
     async function nextRound() {
 
         if (!isHost) return;
@@ -3538,10 +3441,6 @@ FILME"
     }
 
 
-    /* ==========================================
-       ESCAPE HTML
-    =========================================== */
-
     function escapeHtml(text) {
 
         const div =
@@ -3557,10 +3456,6 @@ FILME"
         return div.innerHTML;
     }
 
-
-    /* ==========================================
-       BACKUP REFRESH
-    =========================================== */
 
     setInterval(
         async () => {
