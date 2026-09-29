@@ -1,0 +1,3587 @@
+```html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hotzone</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #101114;
+            --card: #1a1c21;
+            --card-light: #22252c;
+            --border: #30343d;
+            --text: #ffffff;
+            --muted: #a7adb8;
+            --success: #7ee2a8;
+            --danger: #ff7373;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #292d38 0%,
+                    #101114 48%
+                );
+            color: var(--text);
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 24px 18px 60px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .card {
+            background: rgba(26, 28, 33, 0.97);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 28px;
+            margin-bottom: 18px;
+            box-shadow:
+                0 15px 50px rgba(0, 0, 0, 0.28);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: clamp(42px, 10vw, 72px);
+            letter-spacing: -3px;
+            margin: 15px 0 5px;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 5px 0 25px;
+            font-size: 28px;
+        }
+
+        h3 {
+            margin-top: 0;
+        }
+
+        .welcome-box {
+            text-align: center;
+            padding: 10px 0 20px;
+        }
+
+        .welcome-icon {
+            font-size: 58px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 17px;
+            margin-top: 8px;
+        }
+
+        .welcome-title {
+            text-align: center;
+            font-size: 29px;
+            font-weight: 900;
+        }
+
+        .welcome-text {
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 10px auto;
+            text-align: center;
+        }
+
+        .feature-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .feature {
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 14px 8px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .feature strong {
+            display: block;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .small {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--card-light);
+            color: white;
+            border-radius: 13px;
+            padding: 14px 15px;
+            outline: none;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #777;
+        }
+
+        textarea {
+            min-height: 145px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 15px 18px;
+            margin-top: 12px;
+            background: white;
+            color: #111;
+            font-weight: 800;
+            cursor: pointer;
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .secondary {
+            background: #30343c;
+            color: white;
+        }
+
+        .danger {
+            background: #a93434;
+            color: white;
+        }
+
+        .success {
+            background: #6fd49a;
+            color: #101114;
+        }
+
+        /* =========================
+           GAME HEADER
+        ========================= */
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-code-box {
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .game-code-label {
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 3px;
+        }
+
+        .game-code {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 3px;
+        }
+
+        .game-code-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .copy-code-button {
+            width: auto;
+            margin-top: 0;
+            padding: 8px 10px;
+            font-size: 12px;
+            background: #30343c;
+            color: white;
+            border: 1px solid var(--border);
+        }
+
+        .round-pill {
+            background: #30343c;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* =========================
+           PLAYER LIST
+        ========================= */
+
+        .player {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 13px 15px;
+            margin-bottom: 8px;
+        }
+
+        .player-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #30343c;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .player-name {
+            font-weight: 700;
+        }
+
+        .badge {
+            border-radius: 8px;
+            padding: 5px 8px;
+            background: #30343c;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .host-badge {
+            background: white;
+            color: black;
+        }
+
+        /* =========================
+           ROUND
+        ========================= */
+
+        .round-title {
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .category {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 900;
+            margin: 10px 0 25px;
+        }
+
+        .secret-label {
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .secret-number {
+            text-align: center;
+            font-size: clamp(90px, 25vw, 150px);
+            line-height: 1;
+            font-weight: 900;
+            margin: 25px 0;
+        }
+
+        .clue {
+            background: #252830;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            font-size: clamp(22px, 6vw, 34px);
+            font-weight: 800;
+            margin: 20px 0;
+            word-break: break-word;
+        }
+
+        .status {
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 16px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .sent-message {
+            background: #1d3025;
+            border: 1px solid #3c694d;
+            color: var(--success);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            font-weight: 700;
+            margin: 15px 0;
+        }
+
+        /* =========================
+           COUNTER
+        ========================= */
+
+        .counter {
+            background: #252830;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            margin: 18px 0;
+        }
+
+        .counter-number {
+            font-size: 31px;
+            font-weight: 900;
+        }
+
+        .counter-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .counter.ready {
+            border-color: #5f9f78;
+            background: #1c2b22;
+        }
+
+        /* =========================
+           NUMBER GRID
+        ========================= */
+
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 22px 0;
+        }
+
+        .number-btn {
+            aspect-ratio: 1;
+            margin: 0;
+            padding: 0;
+            font-size: 27px;
+            background: #272a31;
+            color: white;
+            border: 2px solid #393d46;
+        }
+
+        .number-btn.selected {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* =========================
+           HOST PANEL
+        ========================= */
+
+        .host-panel {
+            margin-top: 22px;
+            padding: 20px;
+            border-radius: 18px;
+            background: #202329;
+            border: 1px solid #3b3f48;
+        }
+
+        .host-title {
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        .result-hero {
+            text-align: center;
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .result-secret {
+            font-size: 70px;
+            font-weight: 900;
+            margin: 5px 0;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 28px 0 12px;
+        }
+
+        .section-heading h3 {
+            margin: 0;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 8px;
+        }
+
+        .rank-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .rank {
+            display: inline-flex;
+            width: 31px;
+            height: 31px;
+            align-items: center;
+            justify-content: center;
+            background: #30343c;
+            border-radius: 50%;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .leaderboard-name {
+            font-weight: 800;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .leaderboard-score {
+            font-weight: 900;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        .round-points {
+            min-width: 48px;
+            text-align: right;
+            font-weight: 900;
+            color: var(--success);
+            white-space: nowrap;
+        }
+
+        .round-points.zero {
+            color: var(--muted);
+        }
+
+        .finished {
+            text-align: center;
+            padding: 25px;
+            border-radius: 18px;
+            background: #22252c;
+            border: 1px solid #3d424c;
+            margin-top: 20px;
+        }
+
+        .finished-icon {
+            font-size: 45px;
+            margin-bottom: 8px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+                padding: 15px 12px 40px;
+            }
+
+            .card {
+                padding: 20px 16px;
+                border-radius: 19px;
+            }
+
+            .feature-row {
+                grid-template-columns: 1fr;
+            }
+
+            .game-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .round-pill {
+                text-align: center;
+            }
+
+            .leaderboard-row {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    auto
+                    auto;
+                gap: 7px;
+                padding: 13px 10px;
+            }
+
+            .leaderboard-score {
+                font-size: 16px;
+            }
+
+            .round-points {
+                font-size: 14px;
+                min-width: 40px;
+            }
+
+            .rank {
+                width: 27px;
+                height: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ==========================================
+         START
+    =========================================== -->
+
+    <div id="startScreen">
+
+        <div class="welcome-box">
+
+            <div class="welcome-icon">
+                🔥
+            </div>
+
+            <h1>HOTZONE</h1>
+
+            <div class="subtitle">
+                Denk nach. Tipp ab. Hoffe, dass du richtig liegst.
+            </div>
+
+        </div>
+
+        <div class="card">
+
+            <div class="welcome-title">
+                Bereit für eine Runde?
+            </div>
+
+            <p class="welcome-text">
+                Eine Person bekommt eine geheime Zahl zwischen
+                1 und 10. Sie gibt einen Hinweis und alle anderen
+                versuchen, die Zahl zu treffen.
+            </p>
+
+            <div class="feature-row">
+
+                <div class="feature">
+                    <strong>1–10</strong>
+                    Zahlen
+                </div>
+
+                <div class="feature">
+                    <strong>🎯</strong>
+                    Tipps
+                </div>
+
+                <div class="feature">
+                    <strong>🏆</strong>
+                    Punkte
+                </div>
+
+            </div>
+
+            <label>
+                Dein Name
+            </label>
+
+            <input
+                id="hostName"
+                type="text"
+                placeholder="z. B. Max"
+            >
+
+            <label>
+                Anzahl Runden
+            </label>
+
+            <select id="roundCount">
+
+                <option value="1">
+                    1 Runde
+                </option>
+
+                <option value="3">
+                    3 Runden
+                </option>
+
+                <option
+                    value="5"
+                    selected
+                >
+                    5 Runden
+                </option>
+
+                <option value="10">
+                    10 Runden
+                </option>
+
+                <option value="15">
+                    15 Runden
+                </option>
+
+                <option value="20">
+                    20 Runden
+                </option>
+
+            </select>
+
+            <label>
+                Kategorien
+            </label>
+
+            <textarea
+                id="categories"
+                placeholder="Eine Kategorie pro Zeile
+
+ATTRAKTIVITÄT
+ESSEN
+SPORT
+BERUFE
+FILME"
+            ></textarea>
+
+            <div class="small">
+                Pro Runde wird zufällig eine Kategorie ausgewählt.
+            </div>
+
+            <button onclick="createGame()">
+                🔥 Spiel erstellen
+            </button>
+
+            <button
+                class="secondary"
+                onclick="showJoinScreen()"
+            >
+                Spiel beitreten
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         JOIN
+    =========================================== -->
+
+    <div
+        id="joinScreen"
+        class="card hidden"
+    >
+
+        <h2>
+            Spiel beitreten
+        </h2>
+
+        <p class="small center">
+            Gib den Code des Hosts ein und los geht's.
+        </p>
+
+        <label>
+            Spielcode
+        </label>
+
+        <input
+            id="joinCode"
+            type="text"
+            placeholder="z. B. ABC123"
+        >
+
+        <label>
+            Dein Name
+        </label>
+
+        <input
+            id="joinName"
+            type="text"
+            placeholder="z. B. Lisa"
+        >
+
+        <button onclick="joinGame()">
+            Beitreten
+        </button>
+
+        <button
+            class="secondary"
+            onclick="showStartScreen()"
+        >
+            Zurück
+        </button>
+
+    </div>
+
+
+    <!-- ==========================================
+         LOBBY
+    =========================================== -->
+
+    <div
+        id="lobbyScreen"
+        class="hidden"
+    >
+
+        <div class="card">
+
+            <div class="game-header">
+
+                <div class="game-code-box">
+
+                    <span class="game-code-label">
+                        SPIELCODE
+                    </span>
+
+                    <span
+                        id="gameCodeDisplay"
+                        class="game-code"
+                    ></span>
+
+                    <div class="game-code-actions">
+
+                        <button
+                            class="copy-code-button"
+                            onclick="copyGameCode()"
+                        >
+                            📋 Kopieren
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div
+                    id="roundLobbyInfo"
+                    class="round-pill"
+                ></div>
+
+            </div>
+
+            <h2>
+                Wer ist dabei?
+            </h2>
+
+            <div id="playerList"></div>
+
+            <div
+                id="hostLobbyControls"
+                class="host-panel hidden"
+            >
+
+                <div class="host-title">
+                    👑 Du bist der Host
+                </div>
+
+                <p class="small">
+                    Wenn alle Spieler beigetreten sind,
+                    kannst du die Runde starten.
+                </p>
+
+                <button onclick="startRound()">
+                    Runde starten
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         SECRET PLAYER
+    =========================================== -->
+
+    <div
+        id="secretScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="secretRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div
+            id="secretCategory"
+            class="category"
+        ></div>
+
+        <div class="secret-label">
+            DEINE GEHEIME ZAHL
+        </div>
+
+        <div
+            id="secretNumberDisplay"
+            class="secret-number"
+        ></div>
+
+        <div class="status">
+            Denk dir einen Hinweis aus, mit dem
+            die anderen deine Zahl einschätzen können.
+        </div>
+
+        <label>
+            Dein Hinweis
+        </label>
+
+        <input
+            id="clueInput"
+            type="text"
+            placeholder="z. B. Ein mittelgroßer Hund..."
+        >
+
+        <button onclick="sendClue()">
+            Hinweis absenden
+        </button>
+
+        <div
+            id="secretSentMessage"
+            class="sent-message hidden"
+        >
+            ✓ Hinweis wurde gesendet.
+            Warte jetzt auf die Antworten.
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         SECRET WAITING
+    =========================================== -->
+
+    <div
+        id="secretWaitingScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="secretWaitingRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div
+            id="secretWaitingCategory"
+            class="category"
+        ></div>
+
+        <h2>
+            Deine Zahl bleibt geheim 🤫
+        </h2>
+
+        <div class="status">
+            Die anderen Spieler geben gerade ihre Zahlen ein.
+            Du darfst natürlich nicht mitraten.
+        </div>
+
+        <div
+            id="secretWaitingCounter"
+            class="counter"
+        >
+
+            <div class="counter-number">
+                0 / 0
+            </div>
+
+            <div class="counter-label">
+                Antworten bestätigt
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         GUESS
+    =========================================== -->
+
+    <div
+        id="guessScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="guessRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div
+            id="guessCategory"
+            class="category"
+        ></div>
+
+        <div class="small center">
+            DER HINWEIS
+        </div>
+
+        <div
+            id="clueDisplay"
+            class="clue"
+        ></div>
+
+        <h2>
+            Welche Zahl passt?
+        </h2>
+
+        <div
+            id="numberGrid"
+            class="number-grid"
+        ></div>
+
+        <div
+            id="selectedNumberText"
+            class="status hidden"
+        >
+            Deine Auswahl:
+            <strong id="selectedNumber"></strong>
+        </div>
+
+        <button
+            id="confirmButton"
+            onclick="confirmGuess()"
+            disabled
+        >
+            Antwort bestätigen
+        </button>
+
+        <div
+            id="confirmedMessage"
+            class="sent-message hidden"
+        >
+            ✓ Antwort bestätigt –
+            sie ist jetzt gesperrt.
+        </div>
+
+        <div
+            id="hostGuessControls"
+            class="host-panel hidden"
+        >
+
+            <div class="host-title">
+                👑 Host-Kontrolle
+            </div>
+
+            <div
+                id="hostGuessCounter"
+                class="counter"
+            >
+
+                <div class="counter-number">
+                    0 / 0
+                </div>
+
+                <div class="counter-label">
+                    Antworten bestätigt
+                </div>
+
+            </div>
+
+            <p class="small">
+                Du siehst die Antworten erst beim Auflösen.
+            </p>
+
+            <button
+                class="danger"
+                onclick="revealResult()"
+            >
+                Runde beenden & Ergebnis zeigen
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         HOST SECRET
+    =========================================== -->
+
+    <div
+        id="hostSecretScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="hostSecretRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div
+            id="hostSecretCategory"
+            class="category"
+        ></div>
+
+        <div class="secret-label">
+            DEINE GEHEIME ZAHL
+        </div>
+
+        <div
+            id="hostSecretNumber"
+            class="secret-number"
+        ></div>
+
+        <div
+            id="hostSecretClueBefore"
+            class="status"
+        >
+            Du hast die geheime Zahl.
+            Gib jetzt deinen Hinweis ein.
+        </div>
+
+        <label>
+            Dein Hinweis
+        </label>
+
+        <input
+            id="hostClueInput"
+            type="text"
+            placeholder="Dein Hinweis..."
+        >
+
+        <button
+            id="hostClueButton"
+            onclick="sendHostClue()"
+        >
+            Hinweis absenden
+        </button>
+
+        <div
+            id="hostSentMessage"
+            class="sent-message hidden"
+        >
+            ✓ Hinweis wurde gesendet.
+            Die geheime Zahl bleibt für dich sichtbar.
+        </div>
+
+        <div class="host-panel">
+
+            <div class="host-title">
+                👑 Rundenkontrolle
+            </div>
+
+            <div
+                id="hostSecretCounter"
+                class="counter"
+            >
+
+                <div class="counter-number">
+                    0 / 0
+                </div>
+
+                <div class="counter-label">
+                    Antworten bestätigt
+                </div>
+
+            </div>
+
+            <button
+                class="danger"
+                onclick="revealResult()"
+            >
+                Runde beenden & Ergebnis zeigen
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         WAITING
+    =========================================== -->
+
+    <div
+        id="waitingScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="waitingRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div
+            id="waitingCategory"
+            class="category"
+        ></div>
+
+        <h2>
+            Der Hinweis kommt gleich 👀
+        </h2>
+
+        <div class="status">
+            Die geheime Person denkt sich gerade
+            einen Hinweis aus.
+        </div>
+
+        <div
+            id="waitingCounter"
+            class="counter"
+        >
+
+            <div class="counter-number">
+                0 / 0
+            </div>
+
+            <div class="counter-label">
+                Antworten bestätigt
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         RESULT
+    =========================================== -->
+
+    <div
+        id="resultScreen"
+        class="card hidden"
+    >
+
+        <div
+            id="resultRoundInfo"
+            class="round-title"
+        ></div>
+
+        <div class="result-hero">
+
+            <div class="small">
+                DIE GEHEIME ZAHL WAR
+            </div>
+
+            <div
+                id="resultSecretNumber"
+                class="result-secret"
+            ></div>
+
+            <div
+                id="resultCategory"
+                class="small"
+            ></div>
+
+        </div>
+
+        <div class="small center">
+            DER HINWEIS
+        </div>
+
+        <div
+            id="resultClue"
+            class="clue"
+        ></div>
+
+        <div class="section-heading">
+
+            <h3>
+                🏆 Gesamtstand
+            </h3>
+
+            <span class="small">
+                + Punkte dieser Runde
+            </span>
+
+        </div>
+
+        <div
+            id="leaderboard"
+        ></div>
+
+        <div
+            id="hostNextRoundControls"
+            class="host-panel hidden"
+        >
+
+            <div class="host-title">
+                Bereit für die nächste Runde?
+            </div>
+
+            <p class="small">
+                Die Gesamtpunkte bleiben erhalten.
+            </p>
+
+            <button
+                class="success"
+                onclick="nextRound()"
+            >
+                Nächste Runde starten
+            </button>
+
+        </div>
+
+        <div
+            id="gameFinishedMessage"
+            class="finished hidden"
+        >
+
+            <div class="finished-icon">
+                🏆
+            </div>
+
+            <h2>
+                Spiel beendet!
+            </h2>
+
+            <p class="small">
+                Das war die letzte Runde.
+                Der endgültige Punktestand steht oben.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ==========================================
+       SUPABASE
+    =========================================== */
+
+    const SUPABASE_URL =
+        "https://odjomemslreozqtsaubk.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_UGHw0gtYuiDaKjyXv1HynA_eXT82BlG";
+
+    const supabaseClient =
+        window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+    /* ==========================================
+       GAME STATE
+    =========================================== */
+
+    let gameId = null;
+    let playerId = null;
+
+    let isHost = false;
+
+    let currentGame = null;
+    let players = [];
+
+    let selectedGuess = null;
+
+    let roundPoints = {};
+
+
+    /* ==========================================
+       SCREEN MANAGEMENT
+    =========================================== */
+
+    function hideAllScreens() {
+
+        const screens = [
+            "startScreen",
+            "joinScreen",
+            "lobbyScreen",
+            "secretScreen",
+            "secretWaitingScreen",
+            "guessScreen",
+            "hostSecretScreen",
+            "waitingScreen",
+            "resultScreen"
+        ];
+
+        screens.forEach(id => {
+
+            document
+                .getElementById(id)
+                .classList
+                .add("hidden");
+
+        });
+    }
+
+
+    function showStartScreen() {
+
+        hideAllScreens();
+
+        document
+            .getElementById("startScreen")
+            .classList
+            .remove("hidden");
+    }
+
+
+    function showJoinScreen() {
+
+        hideAllScreens();
+
+        document
+            .getElementById("joinScreen")
+            .classList
+            .remove("hidden");
+    }
+
+
+    function showLobby() {
+
+        hideAllScreens();
+
+        document
+            .getElementById("lobbyScreen")
+            .classList
+            .remove("hidden");
+
+        renderLobby();
+    }
+
+
+    /* ==========================================
+       GAME CODE
+    =========================================== */
+
+    function generateGameCode() {
+
+        const chars =
+            "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+        let code = "";
+
+        for (
+            let i = 0;
+            i < 6;
+            i++
+        ) {
+
+            code +=
+                chars[
+                    Math.floor(
+                        Math.random() *
+                        chars.length
+                    )
+                ];
+        }
+
+        return code;
+    }
+
+
+    async function copyGameCode() {
+
+        if (!gameId) return;
+
+        try {
+
+            await navigator.clipboard.writeText(
+                gameId
+            );
+
+            const button =
+                document.querySelector(
+                    ".copy-code-button"
+                );
+
+            if (button) {
+
+                const oldText =
+                    button.textContent;
+
+                button.textContent =
+                    "✓ Kopiert";
+
+                setTimeout(() => {
+
+                    button.textContent =
+                        oldText;
+
+                }, 1500);
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Der Spielcode konnte nicht kopiert werden."
+            );
+        }
+    }
+
+
+    /* ==========================================
+       CREATE GAME
+    =========================================== */
+
+    async function createGame() {
+
+        const name =
+            document
+                .getElementById("hostName")
+                .value
+                .trim();
+
+
+        if (!name) {
+
+            alert(
+                "Bitte gib deinen Namen ein."
+            );
+
+            return;
+        }
+
+
+        const roundCount =
+            parseInt(
+                document
+                    .getElementById("roundCount")
+                    .value
+            );
+
+
+        let categoryText =
+            document
+                .getElementById("categories")
+                .value
+                .trim();
+
+
+        let categories =
+            categoryText
+                .split("\n")
+                .map(x => x.trim())
+                .filter(x => x.length > 0);
+
+
+        if (
+            categories.length === 0
+        ) {
+
+            categories = [
+                "ATTRAKTIVITÄT"
+            ];
+        }
+
+
+        gameId =
+            generateGameCode();
+
+
+        const {
+            data: game,
+            error: gameError
+        } =
+            await supabaseClient
+                .from("games")
+                .insert({
+
+                    id:
+                        gameId,
+
+                    category:
+                        categories[0],
+
+                    categories:
+                        categories,
+
+                    total_rounds:
+                        roundCount,
+
+                    current_round:
+                        0,
+
+                    secret_number:
+                        5,
+
+                    clue:
+                        "",
+
+                    phase:
+                        "waiting"
+
+                })
+                .select()
+                .single();
+
+
+        if (gameError) {
+
+            console.error(gameError);
+
+            alert(
+                "Fehler beim Erstellen des Spiels: " +
+                gameError.message
+            );
+
+            return;
+        }
+
+
+        const {
+            data: player,
+            error: playerError
+        } =
+            await supabaseClient
+                .from("players")
+                .insert({
+
+                    game_id:
+                        gameId,
+
+                    name:
+                        name,
+
+                    role:
+                        "host",
+
+                    score:
+                        0,
+
+                    guess_confirmed:
+                        false
+
+                })
+                .select()
+                .single();
+
+
+        if (playerError) {
+
+            console.error(playerError);
+
+            alert(
+                "Fehler beim Erstellen des Hosts: " +
+                playerError.message
+            );
+
+            return;
+        }
+
+
+        playerId =
+            player.id;
+
+        isHost =
+            true;
+
+        currentGame =
+            game;
+
+        roundPoints =
+            {};
+
+
+        subscribeToGame();
+
+        showLobby();
+
+        await loadPlayers();
+    }
+
+
+    /* ==========================================
+       JOIN GAME
+    =========================================== */
+
+    async function joinGame() {
+
+        const code =
+            document
+                .getElementById("joinCode")
+                .value
+                .trim()
+                .toUpperCase();
+
+
+        const name =
+            document
+                .getElementById("joinName")
+                .value
+                .trim();
+
+
+        if (!code || !name) {
+
+            alert(
+                "Bitte Spielcode und Namen eingeben."
+            );
+
+            return;
+        }
+
+
+        const {
+            data: game,
+            error: gameError
+        } =
+            await supabaseClient
+                .from("games")
+                .select("*")
+                .eq("id", code)
+                .single();
+
+
+        if (gameError || !game) {
+
+            alert(
+                "Spiel nicht gefunden."
+            );
+
+            return;
+        }
+
+
+        const {
+            data: player,
+            error: playerError
+        } =
+            await supabaseClient
+                .from("players")
+                .insert({
+
+                    game_id:
+                        code,
+
+                    name:
+                        name,
+
+                    role:
+                        "guesser",
+
+                    score:
+                        0,
+
+                    guess_confirmed:
+                        false
+
+                })
+                .select()
+                .single();
+
+
+        if (playerError) {
+
+            console.error(playerError);
+
+            alert(
+                "Fehler beim Beitreten: " +
+                playerError.message
+            );
+
+            return;
+        }
+
+
+        gameId =
+            code;
+
+        playerId =
+            player.id;
+
+        isHost =
+            false;
+
+        currentGame =
+            game;
+
+        roundPoints =
+            {};
+
+
+        subscribeToGame();
+
+        showLobby();
+
+        await loadPlayers();
+    }
+
+
+    /* ==========================================
+       REALTIME
+    =========================================== */
+
+    function subscribeToGame() {
+
+        supabaseClient
+            .channel(
+                "game-" + gameId
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "games",
+                    filter:
+                        "id=eq." + gameId
+                },
+                async payload => {
+
+                    if (payload.new) {
+
+                        currentGame =
+                            payload.new;
+
+                        await loadPlayers();
+
+                        renderCurrentPhase();
+                    }
+                }
+            )
+
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "players",
+                    filter:
+                        "game_id=eq." + gameId
+                },
+                async () => {
+
+                    await loadPlayers();
+
+                    renderCurrentPhase();
+                }
+            )
+
+            .subscribe();
+    }
+
+
+    /* ==========================================
+       LOAD PLAYERS
+    =========================================== */
+
+    async function loadPlayers() {
+
+        if (!gameId) return;
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("players")
+                .select("*")
+                .eq("game_id", gameId)
+                .order(
+                    "created_at",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            return;
+        }
+
+
+        players =
+            data || [];
+
+
+        renderLobby();
+
+        updateCounters();
+    }
+
+
+    /* ==========================================
+       LOBBY
+    =========================================== */
+
+    function renderLobby() {
+
+        if (!currentGame) return;
+
+
+        const list =
+            document
+                .getElementById(
+                    "playerList"
+                );
+
+
+        if (!list) return;
+
+
+        list.innerHTML = "";
+
+
+        players.forEach(
+            (player, index) => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "player";
+
+
+                let badge = "";
+
+
+                if (
+                    player.role ===
+                    "host"
+                ) {
+
+                    badge =
+                        `<span class="badge host-badge">
+                            HOST
+                        </span>`;
+                }
+
+
+                div.innerHTML = `
+
+                    <div class="player-left">
+
+                        <div class="player-number">
+                            ${index + 1}
+                        </div>
+
+                        <span class="player-name">
+                            ${escapeHtml(
+                                player.name
+                            )}
+                        </span>
+
+                    </div>
+
+                    ${badge}
+                `;
+
+
+                list.appendChild(div);
+            }
+        );
+
+
+        document
+            .getElementById(
+                "gameCodeDisplay"
+            )
+            .textContent =
+            gameId;
+
+
+        document
+            .getElementById(
+                "roundLobbyInfo"
+            )
+            .textContent =
+            `${currentGame.total_rounds} Runden`;
+
+
+        const controls =
+            document
+                .getElementById(
+                    "hostLobbyControls"
+                );
+
+
+        if (
+            isHost &&
+            currentGame.phase ===
+                "waiting"
+        ) {
+
+            controls
+                .classList
+                .remove("hidden");
+
+        } else {
+
+            controls
+                .classList
+                .add("hidden");
+        }
+    }
+
+
+    /* ==========================================
+       CURRENT PHASE
+    =========================================== */
+
+    function renderCurrentPhase() {
+
+        if (!currentGame) return;
+
+
+        if (
+            currentGame.phase ===
+            "waiting"
+        ) {
+
+            showLobby();
+
+            return;
+        }
+
+
+        if (
+            currentGame.phase ===
+            "clue"
+        ) {
+
+            showCluePhase();
+
+            return;
+        }
+
+
+        if (
+            currentGame.phase ===
+            "guess"
+        ) {
+
+            showGuessPhase();
+
+            return;
+        }
+
+
+        if (
+            currentGame.phase ===
+            "result"
+        ) {
+
+            showResult();
+
+            return;
+        }
+    }
+
+
+    /* ==========================================
+       START ROUND
+    =========================================== */
+
+    async function startRound() {
+
+        if (!isHost) return;
+
+
+        if (
+            players.length < 2
+        ) {
+
+            alert(
+                "Es müssen mindestens 2 Spieler im Spiel sein."
+            );
+
+            return;
+        }
+
+
+        const categories =
+            Array.isArray(
+                currentGame.categories
+            )
+                ? currentGame.categories
+                : [
+                    "ATTRAKTIVITÄT"
+                ];
+
+
+        const randomCategory =
+            categories[
+                Math.floor(
+                    Math.random() *
+                    categories.length
+                )
+            ];
+
+
+        const randomPlayer =
+            players[
+                Math.floor(
+                    Math.random() *
+                    players.length
+                )
+            ];
+
+
+        const randomNumber =
+            Math.floor(
+                Math.random() * 10
+            ) + 1;
+
+
+        const nextRound =
+            (
+                currentGame.current_round ||
+                0
+            ) + 1;
+
+
+        selectedGuess =
+            null;
+
+
+        roundPoints =
+            {};
+
+
+        await supabaseClient
+            .from("players")
+            .update({
+
+                guess:
+                    null,
+
+                guess_confirmed:
+                    false
+
+            })
+            .eq(
+                "game_id",
+                gameId
+            );
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    category:
+                        randomCategory,
+
+                    secret_number:
+                        randomNumber,
+
+                    secret_player_id:
+                        randomPlayer.id,
+
+                    clue:
+                        "",
+
+                    phase:
+                        "clue",
+
+                    current_round:
+                        nextRound
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Starten der Runde: " +
+                error.message
+            );
+        }
+    }
+
+
+    /* ==========================================
+       CLUE PHASE
+    =========================================== */
+
+    function showCluePhase() {
+
+        hideAllScreens();
+
+
+        const secretPlayer =
+            currentGame.secret_player_id ===
+            playerId;
+
+
+        if (secretPlayer) {
+
+            if (isHost) {
+
+                showHostSecretScreen();
+
+            } else {
+
+                document
+                    .getElementById(
+                        "secretScreen"
+                    )
+                    .classList
+                    .remove("hidden");
+
+
+                document
+                    .getElementById(
+                        "secretNumberDisplay"
+                    )
+                    .textContent =
+                    currentGame.secret_number;
+
+
+                document
+                    .getElementById(
+                        "secretCategory"
+                    )
+                    .textContent =
+                    currentGame.category;
+
+
+                document
+                    .getElementById(
+                        "secretRoundInfo"
+                    )
+                    .textContent =
+                    `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+            }
+
+        } else {
+
+            document
+                .getElementById(
+                    "waitingScreen"
+                )
+                .classList
+                .remove("hidden");
+
+
+            document
+                .getElementById(
+                    "waitingRoundInfo"
+                )
+                .textContent =
+                `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+            document
+                .getElementById(
+                    "waitingCategory"
+                )
+                .textContent =
+                currentGame.category;
+
+
+            updateCounters();
+        }
+    }
+
+
+    /* ==========================================
+       HOST SECRET
+    =========================================== */
+
+    function showHostSecretScreen() {
+
+        hideAllScreens();
+
+
+        document
+            .getElementById(
+                "hostSecretScreen"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "hostSecretNumber"
+            )
+            .textContent =
+            currentGame.secret_number;
+
+
+        document
+            .getElementById(
+                "hostSecretCategory"
+            )
+            .textContent =
+            currentGame.category;
+
+
+        document
+            .getElementById(
+                "hostSecretRoundInfo"
+            )
+            .textContent =
+            `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+        const clueSent =
+            currentGame.clue &&
+            currentGame.clue.trim().length > 0;
+
+
+        if (clueSent) {
+
+            document
+                .getElementById(
+                    "hostClueInput"
+                )
+                .value =
+                currentGame.clue;
+
+
+            document
+                .getElementById(
+                    "hostClueInput"
+                )
+                .disabled =
+                true;
+
+
+            document
+                .getElementById(
+                    "hostClueButton"
+                )
+                .disabled =
+                true;
+
+
+            document
+                .getElementById(
+                    "hostSentMessage"
+                )
+                .classList
+                .remove("hidden");
+
+
+            document
+                .getElementById(
+                    "hostSecretClueBefore"
+                )
+                .textContent =
+                "Hinweis gesendet. Deine geheime Zahl bleibt für dich sichtbar.";
+
+        } else {
+
+            document
+                .getElementById(
+                    "hostClueInput"
+                )
+                .disabled =
+                false;
+
+
+            document
+                .getElementById(
+                    "hostClueButton"
+                )
+                .disabled =
+                false;
+
+
+            document
+                .getElementById(
+                    "hostSentMessage"
+                )
+                .classList
+                .add("hidden");
+
+
+            document
+                .getElementById(
+                    "hostSecretClueBefore"
+                )
+                .textContent =
+                "Du hast die geheime Zahl. Gib jetzt deinen Hinweis ein.";
+        }
+
+
+        updateCounters();
+    }
+
+
+    /* ==========================================
+       SEND CLUE
+    =========================================== */
+
+    async function sendClue() {
+
+        const input =
+            document.getElementById(
+                "clueInput"
+            );
+
+
+        const clue =
+            input.value.trim();
+
+
+        if (!clue) {
+
+            alert(
+                "Bitte gib einen Hinweis ein."
+            );
+
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    clue:
+                        clue,
+
+                    phase:
+                        "guess"
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Absenden des Hinweises."
+            );
+        }
+    }
+
+
+    async function sendHostClue() {
+
+        const input =
+            document.getElementById(
+                "hostClueInput"
+            );
+
+
+        const clue =
+            input.value.trim();
+
+
+        if (!clue) {
+
+            alert(
+                "Bitte gib einen Hinweis ein."
+            );
+
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    clue:
+                        clue,
+
+                    phase:
+                        "guess"
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Absenden des Hinweises."
+            );
+
+            return;
+        }
+
+
+        document
+            .getElementById(
+                "hostClueInput"
+            )
+            .disabled =
+            true;
+
+
+        document
+            .getElementById(
+                "hostClueButton"
+            )
+            .disabled =
+            true;
+
+
+        document
+            .getElementById(
+                "hostSentMessage"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "hostSecretNumber"
+            )
+            .textContent =
+            currentGame.secret_number;
+    }
+
+
+    /* ==========================================
+       GUESS PHASE
+    =========================================== */
+
+    function showGuessPhase() {
+
+        const secretPlayer =
+            currentGame.secret_player_id ===
+            playerId;
+
+
+        if (secretPlayer) {
+
+            if (isHost) {
+
+                showHostSecretScreen();
+
+            } else {
+
+                hideAllScreens();
+
+                document
+                    .getElementById(
+                        "secretWaitingScreen"
+                    )
+                    .classList
+                    .remove("hidden");
+
+
+                document
+                    .getElementById(
+                        "secretWaitingRoundInfo"
+                    )
+                    .textContent =
+                    `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+                document
+                    .getElementById(
+                        "secretWaitingCategory"
+                    )
+                    .textContent =
+                    currentGame.category;
+
+
+                updateCounters();
+            }
+
+
+            return;
+        }
+
+
+        hideAllScreens();
+
+
+        document
+            .getElementById(
+                "guessScreen"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "guessRoundInfo"
+            )
+            .textContent =
+            `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+        document
+            .getElementById(
+                "guessCategory"
+            )
+            .textContent =
+            currentGame.category;
+
+
+        document
+            .getElementById(
+                "clueDisplay"
+            )
+            .textContent =
+            currentGame.clue ||
+            "Kein Hinweis";
+
+
+        createNumberButtons();
+
+
+        const me =
+            players.find(
+                p =>
+                    p.id ===
+                    playerId
+            );
+
+
+        if (
+            me &&
+            me.guess_confirmed
+        ) {
+
+            lockGuess();
+
+        } else {
+
+            unlockGuess();
+        }
+
+
+        const hostControls =
+            document
+                .getElementById(
+                    "hostGuessControls"
+                );
+
+
+        if (isHost) {
+
+            hostControls
+                .classList
+                .remove("hidden");
+
+        } else {
+
+            hostControls
+                .classList
+                .add("hidden");
+        }
+
+
+        updateCounters();
+    }
+
+
+    /* ==========================================
+       NUMBER BUTTONS
+    =========================================== */
+
+    function createNumberButtons() {
+
+        const grid =
+            document.getElementById(
+                "numberGrid"
+            );
+
+
+        grid.innerHTML = "";
+
+
+        for (
+            let i = 1;
+            i <= 10;
+            i++
+        ) {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "number-btn";
+
+
+            button.textContent =
+                i;
+
+
+            button.onclick =
+                () =>
+                    selectGuess(i);
+
+
+            if (
+                selectedGuess === i
+            ) {
+
+                button.classList
+                    .add("selected");
+            }
+
+
+            grid.appendChild(button);
+        }
+    }
+
+
+    /* ==========================================
+       SELECT GUESS
+    =========================================== */
+
+    function selectGuess(number) {
+
+        const me =
+            players.find(
+                p =>
+                    p.id ===
+                    playerId
+            );
+
+
+        if (
+            me &&
+            me.guess_confirmed
+        ) {
+
+            return;
+        }
+
+
+        selectedGuess =
+            number;
+
+
+        document
+            .getElementById(
+                "selectedNumber"
+            )
+            .textContent =
+            number;
+
+
+        document
+            .getElementById(
+                "selectedNumberText"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "confirmButton"
+            )
+            .disabled =
+            false;
+
+
+        createNumberButtons();
+    }
+
+
+    /* ==========================================
+       CONFIRM GUESS
+    =========================================== */
+
+    async function confirmGuess() {
+
+        if (
+            selectedGuess === null
+        ) {
+
+            return;
+        }
+
+
+        const me =
+            players.find(
+                p =>
+                    p.id ===
+                    playerId
+            );
+
+
+        if (
+            me &&
+            me.guess_confirmed
+        ) {
+
+            return;
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("players")
+                .update({
+
+                    guess:
+                        selectedGuess,
+
+                    guess_confirmed:
+                        true
+
+                })
+                .eq(
+                    "id",
+                    playerId
+                )
+                .eq(
+                    "game_id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Bestätigen der Antwort."
+            );
+
+            return;
+        }
+
+
+        lockGuess();
+
+        await loadPlayers();
+
+        updateCounters();
+    }
+
+
+    /* ==========================================
+       LOCK GUESS
+    =========================================== */
+
+    function lockGuess() {
+
+        const me =
+            players.find(
+                p =>
+                    p.id ===
+                    playerId
+            );
+
+
+        if (
+            me &&
+            me.guess !== null &&
+            me.guess !== undefined
+        ) {
+
+            selectedGuess =
+                me.guess;
+
+
+            document
+                .getElementById(
+                    "selectedNumber"
+                )
+                .textContent =
+                me.guess;
+
+
+            document
+                .getElementById(
+                    "selectedNumberText"
+                )
+                .classList
+                .remove("hidden");
+        }
+
+
+        document
+            .querySelectorAll(
+                ".number-btn"
+            )
+            .forEach(button => {
+
+                button.disabled =
+                    true;
+            });
+
+
+        document
+            .getElementById(
+                "confirmButton"
+            )
+            .disabled =
+            true;
+
+
+        document
+            .getElementById(
+                "confirmedMessage"
+            )
+            .classList
+            .remove("hidden");
+    }
+
+
+    /* ==========================================
+       UNLOCK GUESS
+    =========================================== */
+
+    function unlockGuess() {
+
+        document
+            .querySelectorAll(
+                ".number-btn"
+            )
+            .forEach(button => {
+
+                button.disabled =
+                    false;
+            });
+
+
+        document
+            .getElementById(
+                "confirmButton"
+            )
+            .disabled =
+            selectedGuess === null;
+
+
+        document
+            .getElementById(
+                "confirmedMessage"
+            )
+            .classList
+            .add("hidden");
+    }
+
+
+    /* ==========================================
+       COUNTERS
+    =========================================== */
+
+    function updateCounters() {
+
+        if (!currentGame) return;
+
+
+        const totalGuessers =
+            players.filter(
+                p =>
+                    p.id !==
+                    currentGame.secret_player_id
+            ).length;
+
+
+        const confirmedGuessers =
+            players.filter(
+                p =>
+                    p.id !==
+                        currentGame.secret_player_id &&
+                    p.guess_confirmed === true
+            ).length;
+
+
+        const counterIds = [
+            "hostGuessCounter",
+            "hostSecretCounter",
+            "secretWaitingCounter",
+            "waitingCounter"
+        ];
+
+
+        counterIds.forEach(id => {
+
+            const element =
+                document.getElementById(id);
+
+
+            if (!element) return;
+
+
+            const number =
+                element.querySelector(
+                    ".counter-number"
+                );
+
+
+            const label =
+                element.querySelector(
+                    ".counter-label"
+                );
+
+
+            if (number) {
+
+                number.textContent =
+                    `${confirmedGuessers} / ${totalGuessers}`;
+            }
+
+
+            if (label) {
+
+                label.textContent =
+                    confirmedGuessers ===
+                        totalGuessers &&
+                    totalGuessers > 0
+
+                        ? "Alle Antworten sind bestätigt ✓"
+
+                        : "Antworten bestätigt";
+            }
+
+
+            if (
+                totalGuessers > 0 &&
+                confirmedGuessers ===
+                    totalGuessers
+            ) {
+
+                element
+                    .classList
+                    .add("ready");
+
+            } else {
+
+                element
+                    .classList
+                    .remove("ready");
+            }
+        });
+    }
+
+
+    /* ==========================================
+       CALCULATE ROUND POINTS
+    =========================================== */
+
+    function calculateRoundPoints() {
+
+        const secretNumber =
+            currentGame.secret_number;
+
+
+        const result = {};
+
+
+        players.forEach(
+            player => {
+
+                result[player.id] =
+                    0;
+            }
+        );
+
+
+        const guessers =
+            players.filter(
+                p =>
+                    p.id !==
+                    currentGame.secret_player_id
+            );
+
+
+        for (
+            const player of guessers
+        ) {
+
+            if (
+                !player.guess_confirmed ||
+                player.guess === null ||
+                player.guess === undefined
+            ) {
+
+                continue;
+            }
+
+
+            const difference =
+                Math.abs(
+                    player.guess -
+                    secretNumber
+                );
+
+
+            if (
+                difference === 0
+            ) {
+
+                result[player.id] =
+                    3;
+
+            } else if (
+                difference === 1
+            ) {
+
+                result[player.id] =
+                    1;
+            }
+        }
+
+
+        const host =
+            players.find(
+                p =>
+                    p.id ===
+                    playerId
+            );
+
+
+        if (host) {
+
+            let hostPoints = 0;
+
+
+            for (
+                const player of guessers
+            ) {
+
+                if (
+                    !player.guess_confirmed ||
+                    player.guess === null ||
+                    player.guess === undefined
+                ) {
+
+                    continue;
+                }
+
+
+                const difference =
+                    Math.abs(
+                        player.guess -
+                        secretNumber
+                    );
+
+
+                if (
+                    difference === 0
+                ) {
+
+                    hostPoints += 2;
+
+                } else if (
+                    difference === 1
+                ) {
+
+                    hostPoints += 1;
+                }
+            }
+
+
+            result[host.id] =
+                (result[host.id] || 0) +
+                hostPoints;
+        }
+
+
+        return result;
+    }
+
+
+    /* ==========================================
+       REVEAL RESULT
+    =========================================== */
+
+    async function revealResult() {
+
+        if (!isHost) return;
+
+
+        if (
+            currentGame.phase !==
+            "guess"
+        ) {
+
+            return;
+        }
+
+
+        const pointsThisRound =
+            calculateRoundPoints();
+
+
+        roundPoints =
+            pointsThisRound;
+
+
+        for (
+            const player of players
+        ) {
+
+            const points =
+                pointsThisRound[
+                    player.id
+                ] || 0;
+
+
+            if (points === 0) {
+                continue;
+            }
+
+
+            const newScore =
+                (player.score || 0) +
+                points;
+
+
+            await supabaseClient
+                .from("players")
+                .update({
+
+                    score:
+                        newScore
+
+                })
+                .eq(
+                    "id",
+                    player.id
+                );
+        }
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    phase:
+                        "result"
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Anzeigen des Ergebnisses."
+            );
+
+            return;
+        }
+
+
+        await loadPlayers();
+    }
+
+
+    /* ==========================================
+       RESULT SCREEN
+    =========================================== */
+
+    async function showResult() {
+
+        hideAllScreens();
+
+
+        document
+            .getElementById(
+                "resultScreen"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "resultRoundInfo"
+            )
+            .textContent =
+            `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+        document
+            .getElementById(
+                "resultSecretNumber"
+            )
+            .textContent =
+            currentGame.secret_number;
+
+
+        document
+            .getElementById(
+                "resultCategory"
+            )
+            .textContent =
+            currentGame.category;
+
+
+        document
+            .getElementById(
+                "resultClue"
+            )
+            .textContent =
+            currentGame.clue ||
+            "Kein Hinweis";
+
+
+        renderLeaderboard();
+
+
+        const isLastRound =
+            currentGame.current_round >=
+            currentGame.total_rounds;
+
+
+        if (
+            isHost &&
+            !isLastRound
+        ) {
+
+            document
+                .getElementById(
+                    "hostNextRoundControls"
+                )
+                .classList
+                .remove("hidden");
+
+
+            document
+                .getElementById(
+                    "gameFinishedMessage"
+                )
+                .classList
+                .add("hidden");
+
+        } else {
+
+            document
+                .getElementById(
+                    "hostNextRoundControls"
+                )
+                .classList
+                .add("hidden");
+
+
+            if (isLastRound) {
+
+                document
+                    .getElementById(
+                        "gameFinishedMessage"
+                    )
+                    .classList
+                    .remove("hidden");
+
+            } else {
+
+                document
+                    .getElementById(
+                        "gameFinishedMessage"
+                    )
+                    .classList
+                    .add("hidden");
+            }
+        }
+    }
+
+
+    /* ==========================================
+       LEADERBOARD
+    =========================================== */
+
+    function renderLeaderboard() {
+
+        const container =
+            document.getElementById(
+                "leaderboard"
+            );
+
+
+        container.innerHTML = "";
+
+
+        const ranking =
+            [...players].sort(
+                (a, b) =>
+                    (b.score || 0) -
+                    (a.score || 0)
+            );
+
+
+        ranking.forEach(
+            (player, index) => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "leaderboard-row";
+
+
+                const gained =
+                    roundPoints[
+                        player.id
+                    ] || 0;
+
+
+                const pointsClass =
+                    gained > 0
+                        ? "round-points"
+                        : "round-points zero";
+
+
+                row.innerHTML = `
+
+                    <div class="rank-name">
+
+                        <span class="rank">
+                            ${index + 1}
+                        </span>
+
+                        <span class="leaderboard-name">
+                            ${escapeHtml(
+                                player.name
+                            )}
+                        </span>
+
+                    </div>
+
+                    <div class="leaderboard-score">
+                        ${player.score || 0}
+                    </div>
+
+                    <div
+                        class="${pointsClass}"
+                    >
+                        +${gained}
+                    </div>
+
+                `;
+
+
+                container.appendChild(row);
+            }
+        );
+    }
+
+
+    /* ==========================================
+       NEXT ROUND
+    =========================================== */
+
+    async function nextRound() {
+
+        if (!isHost) return;
+
+
+        if (
+            currentGame.current_round >=
+            currentGame.total_rounds
+        ) {
+
+            return;
+        }
+
+
+        selectedGuess =
+            null;
+
+
+        roundPoints =
+            {};
+
+
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    phase:
+                        "waiting",
+
+                    clue:
+                        ""
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Fehler beim Start der nächsten Runde."
+            );
+        }
+    }
+
+
+    /* ==========================================
+       ESCAPE HTML
+    =========================================== */
+
+    function escapeHtml(text) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            text;
+
+
+        return div.innerHTML;
+    }
+
+
+    /* ==========================================
+       BACKUP REFRESH
+    =========================================== */
+
+    setInterval(
+        async () => {
+
+            if (!gameId) return;
+
+
+            await loadPlayers();
+
+
+            if (currentGame) {
+
+                updateCounters();
+            }
+
+        },
+        2000
+    );
+
+</script>
+
+</body>
+</html>
+```
