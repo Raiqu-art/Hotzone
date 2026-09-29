@@ -471,6 +471,42 @@
             margin: 0;
         }
 
+        .answer-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 8px;
+        }
+
+        .answer-name {
+            font-weight: 800;
+        }
+
+        .answer-number {
+            font-size: 20px;
+            font-weight: 900;
+            min-width: 35px;
+            text-align: center;
+        }
+
+        .answer-points {
+            font-weight: 900;
+            color: var(--success);
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .answer-secret {
+            color: #ffd166;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
         .leaderboard-row {
             display: grid;
             grid-template-columns: 1fr auto auto;
@@ -563,6 +599,15 @@
 
             .round-pill {
                 text-align: center;
+            }
+
+            .answer-row {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    auto
+                    auto;
+                gap: 7px;
+                padding: 13px 10px;
             }
 
             .leaderboard-row {
@@ -1204,6 +1249,32 @@ FILME"
             class="clue"
         ></div>
 
+
+        <!-- ==========================================
+             ZWISCHENÜBERSICHT
+        =========================================== -->
+
+        <div class="section-heading">
+
+            <h3>
+                🎯 Antworten dieser Runde
+            </h3>
+
+            <span class="small">
+                Wer hat was getippt?
+            </span>
+
+        </div>
+
+        <div
+            id="answerOverview"
+        ></div>
+
+
+        <!-- ==========================================
+             LEADERBOARD
+        =========================================== -->
+
         <div class="section-heading">
 
             <h3>
@@ -1269,6 +1340,10 @@ FILME"
 
 <script>
 
+    /* ==========================================
+       SUPABASE
+    =========================================== */
+
     const SUPABASE_URL =
         "https://odjomemslreozqtsaubk.supabase.co";
 
@@ -1282,6 +1357,10 @@ FILME"
         );
 
 
+    /* ==========================================
+       GAME STATE
+    ========================================== */
+
     let gameId = null;
     let playerId = null;
 
@@ -1294,6 +1373,10 @@ FILME"
 
     let roundPoints = {};
 
+
+    /* ==========================================
+       SCREEN MANAGEMENT
+    ========================================== */
 
     function hideAllScreens() {
 
@@ -1354,6 +1437,10 @@ FILME"
         renderLobby();
     }
 
+
+    /* ==========================================
+       GAME CODE
+    =========================================== */
 
     function generateGameCode() {
 
@@ -1422,6 +1509,10 @@ FILME"
         }
     }
 
+
+    /* ==========================================
+       CREATE GAME
+    =========================================== */
 
     async function createGame() {
 
@@ -1589,6 +1680,10 @@ FILME"
         await loadPlayers();
     }
 
+
+    /* ==========================================
+       JOIN GAME
+    =========================================== */
 
     async function joinGame() {
 
@@ -1761,6 +1856,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       REALTIME
+    =========================================== */
+
     function subscribeToGame() {
 
         supabaseClient
@@ -1812,6 +1911,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       LOAD PLAYERS
+    =========================================== */
+
     async function loadPlayers() {
 
         if (!gameId) return;
@@ -1850,6 +1953,10 @@ FILME"
         updateCounters();
     }
 
+
+    /* ==========================================
+       LOBBY
+    =========================================== */
 
     function renderLobby() {
 
@@ -1964,6 +2071,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       CURRENT PHASE
+    =========================================== */
+
     function renderCurrentPhase() {
 
         if (!currentGame) return;
@@ -2013,6 +2124,10 @@ FILME"
         }
     }
 
+
+    /* ==========================================
+       START ROUND
+    =========================================== */
 
     async function startRound() {
 
@@ -2158,6 +2273,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       CLUE PHASE
+    =========================================== */
+
     function showCluePhase() {
 
         hideAllScreens();
@@ -2238,6 +2357,10 @@ FILME"
         }
     }
 
+
+    /* ==========================================
+       HOST SECRET
+    =========================================== */
 
     function showHostSecretScreen() {
 
@@ -2360,6 +2483,10 @@ FILME"
         updateCounters();
     }
 
+
+    /* ==========================================
+       SEND CLUE
+    =========================================== */
 
     async function sendClue() {
 
@@ -2501,6 +2628,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       GUESS PHASE
+    =========================================== */
+
     function showGuessPhase() {
 
         const secretPlayer =
@@ -2635,6 +2766,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       NUMBER BUTTONS
+    =========================================== */
+
     function createNumberButtons() {
 
         const grid =
@@ -2684,6 +2819,10 @@ FILME"
         }
     }
 
+
+    /* ==========================================
+       SELECT GUESS
+    =========================================== */
 
     function selectGuess(number) {
 
@@ -2735,6 +2874,10 @@ FILME"
         createNumberButtons();
     }
 
+
+    /* ==========================================
+       CONFIRM GUESS
+    =========================================== */
 
     async function confirmGuess() {
 
@@ -2807,6 +2950,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       LOCK GUESS
+    =========================================== */
+
     function lockGuess() {
 
         const me =
@@ -2872,6 +3019,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       UNLOCK GUESS
+    =========================================== */
+
     function unlockGuess() {
 
         document
@@ -2901,6 +3052,10 @@ FILME"
             .add("hidden");
     }
 
+
+    /* ==========================================
+       COUNTERS
+    =========================================== */
 
     function updateCounters() {
 
@@ -2993,6 +3148,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       CALCULATE ROUND POINTS
+    =========================================== */
+
     function calculateRoundPoints() {
 
         const secretNumber =
@@ -3019,6 +3178,9 @@ FILME"
                     p.id !==
                     currentGame.secret_player_id
             );
+
+
+        let clueGiverPoints = 0;
 
 
         for (
@@ -3055,12 +3217,16 @@ FILME"
                 result[player.id] =
                     3;
 
+                clueGiverPoints += 2;
+
             } else if (
                 difference === 1
             ) {
 
                 result[player.id] =
                     1;
+
+                clueGiverPoints += 1;
 
             } else {
 
@@ -3070,74 +3236,36 @@ FILME"
         }
 
 
-        const host =
+        /*
+         * Der Spieler, der den Hinweis gegeben hat,
+         * bekommt die Bonuspunkte.
+         *
+         * NICHT automatisch der Host.
+         */
+
+        const clueGiver =
             players.find(
                 p =>
                     p.id ===
-                    playerId
+                    currentGame.secret_player_id
             );
 
 
-        if (host) {
+        if (clueGiver) {
 
-            let hostPoints = 0;
-
-
-            for (
-                const player of guessers
-            ) {
-
-                if (
-                    !player.guess_confirmed ||
-                    player.guess === null ||
-                    player.guess === undefined
-                ) {
-
-                    continue;
-                }
-
-
-                const guess =
-                    Number(
-                        player.guess
-                    );
-
-
-                const difference =
-                    Math.abs(
-                        guess -
-                        secretNumber
-                    );
-
-
-                if (
-                    difference === 0
-                ) {
-
-                    hostPoints += 2;
-
-                } else if (
-                    difference === 1
-                ) {
-
-                    hostPoints += 1;
-
-                } else {
-
-                    hostPoints += 0;
-                }
-            }
-
-
-            result[host.id] =
-                (result[host.id] || 0) +
-                hostPoints;
+            result[clueGiver.id] =
+                (result[clueGiver.id] || 0) +
+                clueGiverPoints;
         }
 
 
         return result;
     }
 
+
+    /* ==========================================
+       REVEAL RESULT
+    =========================================== */
 
     async function revealResult() {
 
@@ -3229,6 +3357,126 @@ FILME"
     }
 
 
+    /* ==========================================
+       ANSWER OVERVIEW
+    =========================================== */
+
+    function renderAnswerOverview() {
+
+        const container =
+            document.getElementById(
+                "answerOverview"
+            );
+
+
+        container.innerHTML = "";
+
+
+        const secretNumber =
+            Number(
+                currentGame.secret_number
+            );
+
+
+        const rankingPlayers =
+            [...players];
+
+
+        rankingPlayers.forEach(
+            player => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.className =
+                    "answer-row";
+
+
+                const isClueGiver =
+                    player.id ===
+                    currentGame.secret_player_id;
+
+
+                const hasGuess =
+                    player.guess !== null &&
+                    player.guess !== undefined &&
+                    player.guess_confirmed;
+
+
+                let numberText =
+                    "–";
+
+
+                let points =
+                    0;
+
+
+                if (isClueGiver) {
+
+                    numberText =
+                        secretNumber;
+
+                    points =
+                        roundPoints[
+                            player.id
+                        ] || 0;
+
+                } else if (hasGuess) {
+
+                    numberText =
+                        player.guess;
+
+                    points =
+                        roundPoints[
+                            player.id
+                        ] || 0;
+                }
+
+
+                const label =
+                    isClueGiver
+                        ? `<div class="answer-secret">
+                               HINWEISGEBER
+                           </div>`
+                        : "";
+
+
+                row.innerHTML = `
+
+                    <div>
+                        <div class="answer-name">
+                            ${escapeHtml(
+                                player.name
+                            )}
+                        </div>
+
+                        ${label}
+                    </div>
+
+                    <div class="answer-number">
+                        ${numberText}
+                    </div>
+
+                    <div class="answer-points">
+                        +${points}
+                    </div>
+
+                `;
+
+
+                container.appendChild(row);
+            }
+        );
+    }
+
+
+    /* ==========================================
+       RESULT SCREEN
+    =========================================== */
+
     async function showResult() {
 
         hideAllScreens();
@@ -3274,6 +3522,19 @@ FILME"
             currentGame.clue ||
             "Kein Hinweis";
 
+
+        /*
+         * Jeder Spieler berechnet die Punkte
+         * selbst aus den öffentlich vorhandenen
+         * Rundendaten. Dadurch sehen auch die
+         * Mitspieler ihre echten +Punkte.
+         */
+
+        roundPoints =
+            calculateRoundPoints();
+
+
+        renderAnswerOverview();
 
         renderLeaderboard();
 
@@ -3334,6 +3595,10 @@ FILME"
         }
     }
 
+
+    /* ==========================================
+       LEADERBOARD
+    =========================================== */
 
     function renderLeaderboard() {
 
@@ -3414,6 +3679,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       NEXT ROUND
+    =========================================== */
+
     async function nextRound() {
 
         if (!isHost) return;
@@ -3467,6 +3736,10 @@ FILME"
     }
 
 
+    /* ==========================================
+       ESCAPE HTML
+    =========================================== */
+
     function escapeHtml(text) {
 
         const div =
@@ -3482,6 +3755,10 @@ FILME"
         return div.innerHTML;
     }
 
+
+    /* ==========================================
+       BACKUP REFRESH
+    =========================================== */
 
     setInterval(
         async () => {
