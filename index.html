@@ -310,6 +310,12 @@
             font-weight: 700;
         }
 
+        .player-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
         .badge {
             border-radius: 8px;
             padding: 5px 8px;
@@ -321,6 +327,25 @@
         .host-badge {
             background: white;
             color: black;
+        }
+
+        .kick-button {
+            width: auto;
+            margin: 0;
+            padding: 8px 10px;
+            background: #a93434;
+            color: white;
+            font-size: 12px;
+        }
+
+        .secret-player-info {
+            background: #2b2d35;
+            border: 1px solid #4a4e59;
+            border-radius: 14px;
+            padding: 12px 15px;
+            text-align: center;
+            font-weight: 800;
+            margin: 15px 0;
         }
 
         .round-title {
@@ -632,6 +657,18 @@
                 width: 27px;
                 height: 27px;
             }
+
+            .player {
+                padding: 11px 10px;
+            }
+
+            .player-actions {
+                flex-shrink: 0;
+            }
+
+            .kick-button {
+                padding: 7px 8px;
+            }
         }
     </style>
 </head>
@@ -903,6 +940,11 @@ FILME"
             class="category"
         ></div>
 
+        <div
+            id="secretPlayerInfoSecret"
+            class="secret-player-info"
+        ></div>
+
         <div class="secret-label">
             DEINE GEHEIME ZAHL
         </div>
@@ -957,6 +999,11 @@ FILME"
             class="category"
         ></div>
 
+        <div
+            id="secretPlayerInfoSecretWaiting"
+            class="secret-player-info"
+        ></div>
+
         <h2>
             Deine Zahl bleibt geheim 🤫
         </h2>
@@ -999,83 +1046,39 @@ FILME"
             class="category"
         ></div>
 
-        <div class="small center">
-            DER HINWEIS
-        </div>
+        <div
+            id="secretPlayerInfoGuess"
+            class="secret-player-info"
+        ></div>
 
         <div
-            id="clueDisplay"
+            id="guessClue"
             class="clue"
         ></div>
 
-        <h2>
-            Welche Zahl passt?
-        </h2>
+        <div class="small center">
+            Wähle deine Zahl zwischen 1 und 10.
+        </div>
 
         <div
             id="numberGrid"
             class="number-grid"
         ></div>
 
-        <div
-            id="selectedNumberText"
-            class="status hidden"
-        >
-            Deine Auswahl:
-            <strong id="selectedNumber"></strong>
-        </div>
-
         <button
-            id="confirmButton"
+            id="confirmGuessButton"
             onclick="confirmGuess()"
             disabled
         >
-            Antwort bestätigen
+            Zahl bestätigen
         </button>
 
         <div
-            id="confirmedMessage"
+            id="guessConfirmedMessage"
             class="sent-message hidden"
         >
-            ✓ Antwort bestätigt –
-            sie ist jetzt gesperrt.
-        </div>
-
-        <div
-            id="hostGuessControls"
-            class="host-panel hidden"
-        >
-
-            <div class="host-title">
-                👑 Host-Kontrolle
-            </div>
-
-            <div
-                id="hostGuessCounter"
-                class="counter"
-            >
-
-                <div class="counter-number">
-                    0 / 0
-                </div>
-
-                <div class="counter-label">
-                    Antworten bestätigt
-                </div>
-
-            </div>
-
-            <p class="small">
-                Du siehst die Antworten erst beim Auflösen.
-            </p>
-
-            <button
-                class="danger"
-                onclick="revealResult()"
-            >
-                Runde beenden & Ergebnis zeigen
-            </button>
-
+            ✓ Deine Zahl wurde bestätigt.
+            Du kannst sie nicht mehr ändern.
         </div>
 
     </div>
@@ -1096,6 +1099,11 @@ FILME"
             class="category"
         ></div>
 
+        <div
+            id="secretPlayerInfoHost"
+            class="secret-player-info"
+        ></div>
+
         <div class="secret-label">
             DEINE GEHEIME ZAHL
         </div>
@@ -1105,14 +1113,6 @@ FILME"
             class="secret-number"
         ></div>
 
-        <div
-            id="hostSecretClueBefore"
-            class="status"
-        >
-            Du hast die geheime Zahl.
-            Gib jetzt deinen Hinweis ein.
-        </div>
-
         <label>
             Dein Hinweis
         </label>
@@ -1120,53 +1120,44 @@ FILME"
         <input
             id="hostClueInput"
             type="text"
-            placeholder="Dein Hinweis..."
+            placeholder="z. B. Ein mittelgroßer Hund..."
         >
 
         <button
-            id="hostClueButton"
-            onclick="sendHostClue()"
+            onclick="sendClue()"
         >
             Hinweis absenden
         </button>
 
         <div
-            id="hostSentMessage"
+            id="hostClueSentMessage"
             class="sent-message hidden"
         >
             ✓ Hinweis wurde gesendet.
-            Die geheime Zahl bleibt für dich sichtbar.
+            Die anderen können jetzt raten.
         </div>
 
-        <div class="host-panel">
+        <div
+            id="hostGuessCounter"
+            class="counter"
+        >
 
-            <div class="host-title">
-                👑 Rundenkontrolle
+            <div class="counter-number">
+                0 / 0
             </div>
 
-            <div
-                id="hostSecretCounter"
-                class="counter"
-            >
-
-                <div class="counter-number">
-                    0 / 0
-                </div>
-
-                <div class="counter-label">
-                    Antworten bestätigt
-                </div>
-
+            <div class="counter-label">
+                Antworten bestätigt
             </div>
-
-            <button
-                class="danger"
-                onclick="revealResult()"
-            >
-                Runde beenden & Ergebnis zeigen
-            </button>
 
         </div>
+
+        <button
+            class="danger"
+            onclick="revealResult()"
+        >
+            Ergebnis aufdecken
+        </button>
 
     </div>
 
@@ -1186,8 +1177,13 @@ FILME"
             class="category"
         ></div>
 
+        <div
+            id="secretPlayerInfoWaiting"
+            class="secret-player-info"
+        ></div>
+
         <h2>
-            Der Hinweis kommt gleich 👀
+            Hinweis wird vorbereitet 🤔
         </h2>
 
         <div class="status">
@@ -1236,51 +1232,38 @@ FILME"
 
             <div
                 id="resultCategory"
-                class="small"
+                class="category"
+            ></div>
+
+            <div
+                id="resultClue"
+                class="clue"
             ></div>
 
         </div>
 
-        <div class="small center">
-            DER HINWEIS
-        </div>
-
-        <div
-            id="resultClue"
-            class="clue"
-        ></div>
 
         <div class="section-heading">
 
             <h3>
-                🎯 Antworten dieser Runde
+                Zwischenübersicht
             </h3>
-
-            <span class="small">
-                Wer hat was getippt?
-            </span>
 
         </div>
 
-        <div
-            id="answerOverview"
-        ></div>
+        <div id="answerOverview"></div>
+
 
         <div class="section-heading">
 
             <h3>
-                🏆 Gesamtstand
+                Gesamtpunktestand
             </h3>
-
-            <span class="small">
-                + Punkte dieser Runde
-            </span>
 
         </div>
 
-        <div
-            id="leaderboard"
-        ></div>
+        <div id="leaderboard"></div>
+
 
         <div
             id="hostNextRoundControls"
@@ -1288,11 +1271,12 @@ FILME"
         >
 
             <div class="host-title">
-                Bereit für die nächste Runde?
+                👑 Nächste Runde
             </div>
 
             <p class="small">
-                Die Gesamtpunkte bleiben erhalten.
+                Die nächste geheime Person wird automatisch
+                aus den Spielern gewählt, die noch nicht dran waren.
             </p>
 
             <button
@@ -1385,10 +1369,15 @@ FILME"
 
         screens.forEach(id => {
 
-            document
-                .getElementById(id)
-                .classList
-                .add("hidden");
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+
+                element
+                    .classList
+                    .add("hidden");
+            }
 
         });
     }
@@ -1513,6 +1502,18 @@ FILME"
                 .value
                 .trim();
 
+        const totalRounds =
+            Number(
+                document
+                    .getElementById("roundCount")
+                    .value
+            );
+
+        const categoryText =
+            document
+                .getElementById("categories")
+                .value
+                .trim();
 
         if (!name) {
 
@@ -1523,45 +1524,52 @@ FILME"
             return;
         }
 
-
-        const roundCount =
-            parseInt(
-                document
-                    .getElementById("roundCount")
-                    .value
-            );
-
-
-        let categoryText =
-            document
-                .getElementById("categories")
-                .value
-                .trim();
-
-
         let categories =
             categoryText
                 .split("\n")
-                .map(x => x.trim())
-                .filter(x => x.length > 0);
+                .map(category => category.trim())
+                .filter(Boolean);
 
-
-        if (
-            categories.length === 0
-        ) {
+        if (categories.length === 0) {
 
             categories = [
                 "ATTRAKTIVITÄT"
             ];
         }
 
+        categories =
+            [...new Set(categories)];
 
-        gameId =
+
+        let code =
             generateGameCode();
 
 
+        let gameExists = true;
+
+        while (gameExists) {
+
+            const {
+                data
+            } =
+                await supabaseClient
+                    .from("games")
+                    .select("id")
+                    .eq("id", code)
+                    .maybeSingle();
+
+            gameExists =
+                !!data;
+
+            if (gameExists) {
+
+                code =
+                    generateGameCode();
+            }
+        }
+
+
         const {
-            data: game,
             error: gameError
         } =
             await supabaseClient
@@ -1569,32 +1577,39 @@ FILME"
                 .insert({
 
                     id:
-                        gameId,
-
-                    category:
-                        categories[0],
-
-                    categories:
-                        categories,
+                        code,
 
                     total_rounds:
-                        roundCount,
+                        totalRounds,
 
                     current_round:
                         0,
 
-                    secret_number:
-                        5,
+                    phase:
+                        "waiting",
 
-                    clue:
+                    categories:
+                        categories,
+
+                    used_categories:
+                        [],
+
+                    used_secret_players:
+                        [],
+
+                    category:
                         "",
 
-                    phase:
-                        "waiting"
+                    secret_number:
+                        null,
 
-                })
-                .select()
-                .single();
+                    secret_player_id:
+                        null,
+
+                    clue:
+                        ""
+
+                });
 
 
         if (gameError) {
@@ -1619,7 +1634,7 @@ FILME"
                 .insert({
 
                     game_id:
-                        gameId,
+                        code,
 
                     name:
                         name,
@@ -1629,6 +1644,9 @@ FILME"
 
                     score:
                         0,
+
+                    guess:
+                        null,
 
                     guess_confirmed:
                         false
@@ -1643,7 +1661,7 @@ FILME"
             console.error(playerError);
 
             alert(
-                "Fehler beim Erstellen des Hosts: " +
+                "Fehler beim Erstellen des Spielers: " +
                 playerError.message
             );
 
@@ -1651,24 +1669,23 @@ FILME"
         }
 
 
+        gameId =
+            code;
+
         playerId =
             player.id;
 
         isHost =
             true;
 
-        currentGame =
-            game;
 
-        roundPoints =
-            {};
+        await loadGame();
 
+        await loadPlayers();
 
         subscribeToGame();
 
         showLobby();
-
-        await loadPlayers();
     }
 
 
@@ -1676,64 +1693,48 @@ FILME"
        JOIN GAME
     =========================================== */
 
+    let joinCooldown = false;
+
+
     async function joinGame() {
 
-        const button =
+        if (joinCooldown) return;
+
+        joinCooldown =
+            true;
+
+
+        const joinButton =
             document.getElementById(
                 "joinButton"
             );
 
 
-        if (
-            button.disabled
-        ) {
+        if (joinButton) {
 
-            return;
+            joinButton.disabled =
+                true;
+
+            joinButton.textContent =
+                "Beitreten...";
         }
 
 
-        button.disabled =
-            true;
+        setTimeout(() => {
 
+            joinCooldown =
+                false;
 
-        const originalText =
-            button.textContent;
+            if (joinButton) {
 
+                joinButton.disabled =
+                    false;
 
-        let countdown =
-            10;
+                joinButton.textContent =
+                    "Beitreten";
+            }
 
-
-        button.textContent =
-            `Warten... ${countdown}s`;
-
-
-        const countdownInterval =
-            setInterval(() => {
-
-                countdown--;
-
-                if (
-                    countdown > 0
-                ) {
-
-                    button.textContent =
-                        `Warten... ${countdown}s`;
-
-                } else {
-
-                    clearInterval(
-                        countdownInterval
-                    );
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        originalText;
-                }
-
-            }, 1000);
+        }, 10000);
 
 
         const code =
@@ -1742,7 +1743,6 @@ FILME"
                 .value
                 .trim()
                 .toUpperCase();
-
 
         const name =
             document
@@ -1769,13 +1769,69 @@ FILME"
                 .from("games")
                 .select("*")
                 .eq("id", code)
-                .single();
+                .maybeSingle();
 
 
-        if (gameError || !game) {
+        if (gameError) {
+
+            console.error(gameError);
+
+            alert(
+                "Fehler beim Laden des Spiels: " +
+                gameError.message
+            );
+
+            return;
+        }
+
+
+        if (!game) {
 
             alert(
                 "Spiel nicht gefunden."
+            );
+
+            return;
+        }
+
+
+        if (
+            game.phase !==
+            "waiting"
+        ) {
+
+            alert(
+                "Dieses Spiel hat bereits begonnen."
+            );
+
+            return;
+        }
+
+
+        const {
+            data: existingPlayers
+        } =
+            await supabaseClient
+                .from("players")
+                .select("*")
+                .eq("game_id", code);
+
+
+        const nameAlreadyUsed =
+            (existingPlayers || [])
+                .some(
+                    player =>
+                        player.name
+                            .trim()
+                            .toLowerCase() ===
+                        name.toLowerCase()
+                );
+
+
+        if (nameAlreadyUsed) {
+
+            alert(
+                "Dieser Name wird bereits verwendet."
             );
 
             return;
@@ -1797,10 +1853,13 @@ FILME"
                         name,
 
                     role:
-                        "guesser",
+                        "player",
 
                     score:
                         0,
+
+                    guess:
+                        null,
 
                     guess_confirmed:
                         false
@@ -1835,15 +1894,48 @@ FILME"
         currentGame =
             game;
 
-        roundPoints =
-            {};
 
+        await loadPlayers();
 
         subscribeToGame();
 
-        showLobby();
+        renderCurrentPhase();
+    }
 
-        await loadPlayers();
+
+    /* ==========================================
+       LOAD GAME
+    =========================================== */
+
+    async function loadGame() {
+
+        if (!gameId) return;
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .select("*")
+                .eq("id", gameId)
+                .maybeSingle();
+
+
+        if (error) {
+
+            console.error(error);
+
+            return;
+        }
+
+
+        if (!data) return;
+
+
+        currentGame =
+            data;
     }
 
 
@@ -1853,9 +1945,15 @@ FILME"
 
     function subscribeToGame() {
 
+        if (!gameId) return;
+
+
         supabaseClient
             .channel(
-                "game-" + gameId
+                "hotzone-" +
+                gameId +
+                "-" +
+                Math.random()
             )
 
             .on(
@@ -1869,15 +1967,12 @@ FILME"
                 },
                 async payload => {
 
-                    if (payload.new) {
+                    currentGame =
+                        payload.new;
 
-                        currentGame =
-                            payload.new;
+                    await loadPlayers();
 
-                        await loadPlayers();
-
-                        renderCurrentPhase();
-                    }
+                    renderCurrentPhase();
                 }
             )
 
@@ -1939,6 +2034,50 @@ FILME"
             data || [];
 
 
+        /*
+         * Wenn ein Spieler aus der Lobby gekickt wurde,
+         * existiert sein Eintrag nicht mehr.
+         */
+        if (
+            playerId &&
+            !isHost &&
+            !players.some(
+                player =>
+                    player.id === playerId
+            )
+        ) {
+
+            alert(
+                "Du wurdest aus der Lobby gekickt."
+            );
+
+            gameId =
+                null;
+
+            playerId =
+                null;
+
+            currentGame =
+                null;
+
+            players =
+                [];
+
+            roundPoints =
+                {};
+
+            selectedGuess =
+                null;
+
+            isHost =
+                false;
+
+            showStartScreen();
+
+            return;
+        }
+
+
         renderLobby();
 
         updateCounters();
@@ -1980,7 +2119,55 @@ FILME"
                     "player";
 
 
-                let badge = "";
+                const playerLeft =
+                    document.createElement(
+                        "div"
+                    );
+
+                playerLeft.className =
+                    "player-left";
+
+
+                const playerNumber =
+                    document.createElement(
+                        "div"
+                    );
+
+                playerNumber.className =
+                    "player-number";
+
+                playerNumber.textContent =
+                    index + 1;
+
+
+                const playerName =
+                    document.createElement(
+                        "span"
+                    );
+
+                playerName.className =
+                    "player-name";
+
+                playerName.textContent =
+                    player.name;
+
+
+                playerLeft.appendChild(
+                    playerNumber
+                );
+
+                playerLeft.appendChild(
+                    playerName
+                );
+
+
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
+
+                actions.className =
+                    "player-actions";
 
 
                 if (
@@ -1988,34 +2175,64 @@ FILME"
                     "host"
                 ) {
 
-                    badge =
-                        `<span class="badge host-badge">
-                            HOST
-                        </span>`;
+                    const badge =
+                        document.createElement(
+                            "span"
+                        );
+
+                    badge.className =
+                        "badge host-badge";
+
+                    badge.textContent =
+                        "HOST";
+
+                    actions.appendChild(
+                        badge
+                    );
                 }
 
 
-                div.innerHTML = `
+                if (
+                    isHost &&
+                    player.id !== playerId &&
+                    currentGame.phase ===
+                        "waiting"
+                ) {
 
-                    <div class="player-left">
+                    const kickButton =
+                        document.createElement(
+                            "button"
+                        );
 
-                        <div class="player-number">
-                            ${index + 1}
-                        </div>
+                    kickButton.className =
+                        "kick-button";
 
-                        <span class="player-name">
-                            ${escapeHtml(
-                                player.name
-                            )}
-                        </span>
+                    kickButton.textContent =
+                        "Kicken";
 
-                    </div>
+                    kickButton.onclick =
+                        () => kickPlayer(
+                            player.id
+                        );
 
-                    ${badge}
-                `;
+                    actions.appendChild(
+                        kickButton
+                    );
+                }
 
 
-                list.appendChild(div);
+                div.appendChild(
+                    playerLeft
+                );
+
+                div.appendChild(
+                    actions
+                );
+
+
+                list.appendChild(
+                    div
+                );
             }
         );
 
@@ -2059,6 +2276,135 @@ FILME"
                 .classList
                 .add("hidden");
         }
+    }
+
+
+    /* ==========================================
+       KICK PLAYER
+    =========================================== */
+
+    async function kickPlayer(
+        targetPlayerId
+    ) {
+
+        if (!isHost) return;
+
+        if (
+            currentGame &&
+            currentGame.phase !==
+                "waiting"
+        ) {
+
+            return;
+        }
+
+
+        if (
+            targetPlayerId ===
+            playerId
+        ) {
+
+            return;
+        }
+
+
+        const targetPlayer =
+            players.find(
+                player =>
+                    player.id ===
+                    targetPlayerId
+            );
+
+
+        if (!targetPlayer) return;
+
+
+        const confirmed =
+            confirm(
+                `Möchtest du ${targetPlayer.name} wirklich aus der Lobby kicken?`
+            );
+
+
+        if (!confirmed) return;
+
+
+        /*
+         * Den Spieler auch aus der bisherigen
+         * Hinweisgeber-Rotation entfernen.
+         */
+        const usedSecretPlayers =
+            Array.isArray(
+                currentGame.used_secret_players
+            )
+                ? currentGame.used_secret_players
+                : [];
+
+
+        const cleanedUsedSecretPlayers =
+            usedSecretPlayers.filter(
+                id =>
+                    id !==
+                    targetPlayerId
+            );
+
+
+        const {
+            error: deleteError
+        } =
+            await supabaseClient
+                .from("players")
+                .delete()
+                .eq(
+                    "id",
+                    targetPlayerId
+                )
+                .eq(
+                    "game_id",
+                    gameId
+                );
+
+
+        if (deleteError) {
+
+            console.error(
+                deleteError
+            );
+
+            alert(
+                "Der Spieler konnte nicht gekickt werden: " +
+                deleteError.message
+            );
+
+            return;
+        }
+
+
+        const {
+            error: updateError
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    used_secret_players:
+                        cleanedUsedSecretPlayers
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
+
+
+        if (updateError) {
+
+            console.error(
+                updateError
+            );
+        }
+
+
+        await loadPlayers();
     }
 
 
@@ -2117,6 +2463,71 @@ FILME"
 
 
     /* ==========================================
+       SECRET PLAYER LABEL
+    =========================================== */
+
+    function getSecretPlayerName() {
+
+        if (!currentGame) {
+
+            return "Unbekannt";
+        }
+
+
+        const secretPlayer =
+            players.find(
+                player =>
+                    player.id ===
+                    currentGame.secret_player_id
+            );
+
+
+        if (!secretPlayer) {
+
+            return "Unbekannt";
+        }
+
+
+        return secretPlayer.name;
+    }
+
+
+    function updateSecretPlayerLabels() {
+
+        const name =
+            getSecretPlayerName();
+
+
+        const label =
+            `👤 Geheime Person / Hinweisgeber: ${name}`;
+
+
+        const ids = [
+
+            "secretPlayerInfoSecret",
+            "secretPlayerInfoSecretWaiting",
+            "secretPlayerInfoGuess",
+            "secretPlayerInfoHost",
+            "secretPlayerInfoWaiting"
+
+        ];
+
+
+        ids.forEach(id => {
+
+            const element =
+                document.getElementById(id);
+
+            if (element) {
+
+                element.textContent =
+                    label;
+            }
+        });
+    }
+
+
+    /* ==========================================
        START ROUND
     =========================================== */
 
@@ -2150,10 +2561,6 @@ FILME"
         /*
          * Jede Kategorie soll pro Durchlauf
          * genau einmal verwendet werden.
-         *
-         * Wir speichern bereits verwendete
-         * Kategorien in der aktuellen Lobby
-         * über currentGame.used_categories.
          */
 
         let usedCategories =
@@ -2164,24 +2571,14 @@ FILME"
                 : [];
 
 
-        /*
-         * Falls sich die Kategorien geändert
-         * haben oder alte Kategorien nicht mehr
-         * existieren, werden sie entfernt.
-         */
-
         usedCategories =
             usedCategories.filter(
                 category =>
-                    categories.includes(category)
+                    categories.includes(
+                        category
+                    )
             );
 
-
-        /*
-         * Wenn alle Kategorien bereits einmal
-         * verwendet wurden, beginnt ein neuer
-         * Durchlauf.
-         */
 
         if (
             usedCategories.length >=
@@ -2193,11 +2590,6 @@ FILME"
         }
 
 
-        /*
-         * Nur Kategorien auswählen, die in diesem
-         * Durchlauf noch nicht verwendet wurden.
-         */
-
         let availableCategories =
             categories.filter(
                 category =>
@@ -2206,10 +2598,6 @@ FILME"
                     )
             );
 
-
-        /*
-         * Sicherheitsfallback.
-         */
 
         if (
             availableCategories.length === 0
@@ -2232,11 +2620,6 @@ FILME"
             ];
 
 
-        /*
-         * Die gerade ausgewählte Kategorie
-         * wird sofort als verwendet gespeichert.
-         */
-
         const newUsedCategories =
             [
                 ...usedCategories,
@@ -2244,12 +2627,95 @@ FILME"
             ];
 
 
+        /*
+         * HINWEISGEBER-ROTATION
+         *
+         * Ein Spieler darf erst wieder
+         * Hinweisgeber sein, wenn alle anderen
+         * aktuellen Spieler ebenfalls einmal
+         * Hinweisgeber waren.
+         */
+
+        let usedSecretPlayers =
+            Array.isArray(
+                currentGame.used_secret_players
+            )
+                ? currentGame.used_secret_players
+                : [];
+
+
+        const currentPlayerIds =
+            players.map(
+                player =>
+                    player.id
+            );
+
+
+        /*
+         * Spieler entfernen, die nicht mehr
+         * in der Lobby sind.
+         */
+        usedSecretPlayers =
+            usedSecretPlayers.filter(
+                id =>
+                    currentPlayerIds.includes(
+                        id
+                    )
+            );
+
+
+        /*
+         * Wenn alle aktuellen Spieler einmal
+         * Hinweisgeber waren, startet ein
+         * neuer Durchlauf.
+         */
+        if (
+            usedSecretPlayers.length >=
+            players.length
+        ) {
+
+            usedSecretPlayers =
+                [];
+        }
+
+
+        let availableSecretPlayers =
+            players.filter(
+                player =>
+                    !usedSecretPlayers.includes(
+                        player.id
+                    )
+            );
+
+
+        /*
+         * Sicherheitsfallback.
+         */
+        if (
+            availableSecretPlayers.length === 0
+        ) {
+
+            usedSecretPlayers =
+                [];
+
+            availableSecretPlayers =
+                players;
+        }
+
+
         const randomPlayer =
-            players[
+            availableSecretPlayers[
                 Math.floor(
                     Math.random() *
-                    players.length
+                    availableSecretPlayers.length
                 )
+            ];
+
+
+        const newUsedSecretPlayers =
+            [
+                ...usedSecretPlayers,
+                randomPlayer.id
             ];
 
 
@@ -2307,6 +2773,9 @@ FILME"
                     used_categories:
                         newUsedCategories,
 
+                    used_secret_players:
+                        newUsedSecretPlayers,
+
                     secret_number:
                         randomNumber,
 
@@ -2348,6 +2817,8 @@ FILME"
     function showCluePhase() {
 
         hideAllScreens();
+
+        updateSecretPlayerLabels();
 
 
         const secretPlayer =
@@ -2434,6 +2905,8 @@ FILME"
 
         hideAllScreens();
 
+        updateSecretPlayerLabels();
+
 
         document
             .getElementById(
@@ -2484,34 +2957,10 @@ FILME"
 
             document
                 .getElementById(
-                    "hostClueInput"
-                )
-                .disabled =
-                true;
-
-
-            document
-                .getElementById(
-                    "hostClueButton"
-                )
-                .disabled =
-                true;
-
-
-            document
-                .getElementById(
-                    "hostSentMessage"
+                    "hostClueSentMessage"
                 )
                 .classList
                 .remove("hidden");
-
-
-            document
-                .getElementById(
-                    "hostSecretClueBefore"
-                )
-                .textContent =
-                "Hinweis gesendet. Deine geheime Zahl bleibt für dich sichtbar.";
 
         } else {
 
@@ -2519,32 +2968,15 @@ FILME"
                 .getElementById(
                     "hostClueInput"
                 )
-                .disabled =
-                false;
-
-
-            document
-                .getElementById(
-                    "hostClueButton"
-                )
-                .disabled =
-                false;
-
+                .value =
+                "";
 
             document
                 .getElementById(
-                    "hostSentMessage"
+                    "hostClueSentMessage"
                 )
                 .classList
                 .add("hidden");
-
-
-            document
-                .getElementById(
-                    "hostSecretClueBefore"
-                )
-                .textContent =
-                "Du hast die geheime Zahl. Gib jetzt deinen Hinweis ein.";
         }
 
 
@@ -2558,10 +2990,26 @@ FILME"
 
     async function sendClue() {
 
+        if (!currentGame) return;
+
+
+        if (
+            currentGame.secret_player_id !==
+            playerId
+        ) {
+
+            return;
+        }
+
+
         const input =
-            document.getElementById(
-                "clueInput"
-            );
+            isHost
+                ? document.getElementById(
+                    "hostClueInput"
+                )
+                : document.getElementById(
+                    "clueInput"
+                );
 
 
         const clue =
@@ -2571,7 +3019,7 @@ FILME"
         if (!clue) {
 
             alert(
-                "Bitte gib einen Hinweis ein."
+                "Bitte gib zuerst einen Hinweis ein."
             );
 
             return;
@@ -2603,96 +3051,32 @@ FILME"
             console.error(error);
 
             alert(
-                "Fehler beim Absenden des Hinweises."
-            );
-        }
-    }
-
-
-    async function sendHostClue() {
-
-        const input =
-            document.getElementById(
-                "hostClueInput"
-            );
-
-
-        const clue =
-            input.value.trim();
-
-
-        if (!clue) {
-
-            alert(
-                "Bitte gib einen Hinweis ein."
+                "Fehler beim Absenden des Hinweises: " +
+                error.message
             );
 
             return;
         }
 
 
-        const {
-            error
-        } =
-            await supabaseClient
-                .from("games")
-                .update({
+        if (isHost) {
 
-                    clue:
-                        clue,
+            document
+                .getElementById(
+                    "hostClueSentMessage"
+                )
+                .classList
+                .remove("hidden");
 
-                    phase:
-                        "guess"
+        } else {
 
-                })
-                .eq(
-                    "id",
-                    gameId
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            alert(
-                "Fehler beim Absenden des Hinweises."
-            );
-
-            return;
+            document
+                .getElementById(
+                    "secretSentMessage"
+                )
+                .classList
+                .remove("hidden");
         }
-
-
-        document
-            .getElementById(
-                "hostClueInput"
-            )
-            .disabled =
-            true;
-
-
-        document
-            .getElementById(
-                "hostClueButton"
-            )
-            .disabled =
-            true;
-
-
-        document
-            .getElementById(
-                "hostSentMessage"
-            )
-            .classList
-            .remove("hidden");
-
-
-        document
-            .getElementById(
-                "hostSecretNumber"
-            )
-            .textContent =
-            currentGame.secret_number;
     }
 
 
@@ -2701,6 +3085,11 @@ FILME"
     =========================================== */
 
     function showGuessPhase() {
+
+        hideAllScreens();
+
+        updateSecretPlayerLabels();
+
 
         const secretPlayer =
             currentGame.secret_player_id ===
@@ -2711,11 +3100,9 @@ FILME"
 
             if (isHost) {
 
-                showHostSecretScreen();
+                showHostSecretGuessPhase();
 
             } else {
-
-                hideAllScreens();
 
                 document
                     .getElementById(
@@ -2744,12 +3131,8 @@ FILME"
                 updateCounters();
             }
 
-
             return;
         }
-
-
-        hideAllScreens();
 
 
         document
@@ -2778,20 +3161,20 @@ FILME"
 
         document
             .getElementById(
-                "clueDisplay"
+                "guessClue"
             )
             .textContent =
             currentGame.clue ||
-            "Kein Hinweis";
+            "Noch kein Hinweis";
 
 
-        createNumberButtons();
+        renderNumberGrid();
 
 
         const me =
             players.find(
-                p =>
-                    p.id ===
+                player =>
+                    player.id ===
                     playerId
             );
 
@@ -2801,32 +3184,35 @@ FILME"
             me.guess_confirmed
         ) {
 
-            lockGuess();
-
-        } else {
-
-            unlockGuess();
-        }
-
-
-        const hostControls =
             document
                 .getElementById(
-                    "hostGuessControls"
-                );
-
-
-        if (isHost) {
-
-            hostControls
+                    "guessConfirmedMessage"
+                )
                 .classList
                 .remove("hidden");
 
+            document
+                .getElementById(
+                    "confirmGuessButton"
+                )
+                .disabled =
+                true;
+
         } else {
 
-            hostControls
+            document
+                .getElementById(
+                    "guessConfirmedMessage"
+                )
                 .classList
                 .add("hidden");
+
+            document
+                .getElementById(
+                    "confirmGuessButton"
+                )
+                .disabled =
+                selectedGuess === null;
         }
 
 
@@ -2835,10 +3221,81 @@ FILME"
 
 
     /* ==========================================
-       NUMBER BUTTONS
+       HOST SECRET GUESS PHASE
     =========================================== */
 
-    function createNumberButtons() {
+    function showHostSecretGuessPhase() {
+
+        hideAllScreens();
+
+        updateSecretPlayerLabels();
+
+
+        document
+            .getElementById(
+                "hostSecretScreen"
+            )
+            .classList
+            .remove("hidden");
+
+
+        document
+            .getElementById(
+                "hostSecretRoundInfo"
+            )
+            .textContent =
+            `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+        document
+            .getElementById(
+                "hostSecretCategory"
+            )
+            .textContent =
+            currentGame.category;
+
+
+        document
+            .getElementById(
+                "hostSecretNumber"
+            )
+            .textContent =
+            currentGame.secret_number;
+
+
+        document
+            .getElementById(
+                "hostClueInput"
+            )
+            .value =
+            currentGame.clue || "";
+
+
+        document
+            .getElementById(
+                "hostClueInput"
+            )
+            .disabled =
+            true;
+
+
+        document
+            .getElementById(
+                "hostClueSentMessage"
+            )
+            .classList
+            .remove("hidden");
+
+
+        updateCounters();
+    }
+
+
+    /* ==========================================
+       NUMBER GRID
+    =========================================== */
+
+    function renderNumberGrid() {
 
         const grid =
             document.getElementById(
@@ -2846,13 +3303,14 @@ FILME"
             );
 
 
-        grid.innerHTML = "";
+        grid.innerHTML =
+            "";
 
 
         for (
-            let i = 1;
-            i <= 10;
-            i++
+            let number = 1;
+            number <= 10;
+            number++
         ) {
 
             const button =
@@ -2865,39 +3323,58 @@ FILME"
                 "number-btn";
 
 
-            button.textContent =
-                i;
-
-
-            button.onclick =
-                () =>
-                    selectGuess(i);
-
-
             if (
-                selectedGuess === i
+                selectedGuess ===
+                number
             ) {
 
-                button.classList
-                    .add("selected");
+                button.classList.add(
+                    "selected"
+                );
             }
 
 
-            grid.appendChild(button);
+            button.textContent =
+                number;
+
+
+            button.onclick =
+                () => selectGuess(
+                    number
+                );
+
+
+            const me =
+                players.find(
+                    player =>
+                        player.id ===
+                        playerId
+                );
+
+
+            if (
+                me &&
+                me.guess_confirmed
+            ) {
+
+                button.disabled =
+                    true;
+            }
+
+
+            grid.appendChild(
+                button
+            );
         }
     }
 
-
-    /* ==========================================
-       SELECT GUESS
-    =========================================== */
 
     function selectGuess(number) {
 
         const me =
             players.find(
-                p =>
-                    p.id ===
+                player =>
+                    player.id ===
                     playerId
             );
 
@@ -2915,31 +3392,15 @@ FILME"
             number;
 
 
-        document
-            .getElementById(
-                "selectedNumber"
-            )
-            .textContent =
-            number;
+        renderNumberGrid();
 
 
         document
             .getElementById(
-                "selectedNumberText"
-            )
-            .classList
-            .remove("hidden");
-
-
-        document
-            .getElementById(
-                "confirmButton"
+                "confirmGuessButton"
             )
             .disabled =
             false;
-
-
-        createNumberButtons();
     }
 
 
@@ -2950,7 +3411,8 @@ FILME"
     async function confirmGuess() {
 
         if (
-            selectedGuess === null
+            selectedGuess ===
+            null
         ) {
 
             return;
@@ -2959,8 +3421,8 @@ FILME"
 
         const me =
             players.find(
-                p =>
-                    p.id ===
+                player =>
+                    player.id ===
                     playerId
             );
 
@@ -2991,10 +3453,6 @@ FILME"
                 .eq(
                     "id",
                     playerId
-                )
-                .eq(
-                    "game_id",
-                    gameId
                 );
 
 
@@ -3003,121 +3461,34 @@ FILME"
             console.error(error);
 
             alert(
-                "Fehler beim Bestätigen der Antwort."
+                "Fehler beim Bestätigen: " +
+                error.message
             );
 
             return;
         }
 
 
-        lockGuess();
-
-        await loadPlayers();
-
-        updateCounters();
-    }
-
-
-    /* ==========================================
-       LOCK GUESS
-    =========================================== */
-
-    function lockGuess() {
-
-        const me =
-            players.find(
-                p =>
-                    p.id ===
-                    playerId
-            );
-
-
-        if (
-            me &&
-            me.guess !== null &&
-            me.guess !== undefined
-        ) {
-
-            selectedGuess =
-                me.guess;
-
-
-            document
-                .getElementById(
-                    "selectedNumber"
-                )
-                .textContent =
-                me.guess;
-
-
-            document
-                .getElementById(
-                    "selectedNumberText"
-                )
-                .classList
-                .remove("hidden");
-        }
-
-
         document
-            .querySelectorAll(
-                ".number-btn"
+            .getElementById(
+                "guessConfirmedMessage"
             )
-            .forEach(button => {
-
-                button.disabled =
-                    true;
-            });
+            .classList
+            .remove("hidden");
 
 
         document
             .getElementById(
-                "confirmButton"
+                "confirmGuessButton"
             )
             .disabled =
             true;
 
 
-        document
-            .getElementById(
-                "confirmedMessage"
-            )
-            .classList
-            .remove("hidden");
-    }
+        renderNumberGrid();
 
 
-    /* ==========================================
-       UNLOCK GUESS
-    =========================================== */
-
-    function unlockGuess() {
-
-        document
-            .querySelectorAll(
-                ".number-btn"
-            )
-            .forEach(button => {
-
-                button.disabled =
-                    false;
-            });
-
-
-        document
-            .getElementById(
-                "confirmButton"
-            )
-            .disabled =
-            selectedGuess === null;
-
-
-        document
-            .getElementById(
-                "confirmedMessage"
-            )
-            .classList
-            .add("hidden");
+        await loadPlayers();
     }
 
 
@@ -3125,92 +3496,87 @@ FILME"
        COUNTERS
     =========================================== */
 
+    function getGuessers() {
+
+        return players.filter(
+            player =>
+                player.id !==
+                currentGame.secret_player_id
+        );
+    }
+
+
+    function getConfirmedGuessers() {
+
+        return getGuessers().filter(
+            player =>
+                player.guess_confirmed
+        );
+    }
+
+
     function updateCounters() {
 
         if (!currentGame) return;
 
 
-        const totalGuessers =
-            players.filter(
-                p =>
-                    p.id !==
-                    currentGame.secret_player_id
-            ).length;
+        const guessers =
+            getGuessers();
 
 
-        const confirmedGuessers =
-            players.filter(
-                p =>
-                    p.id !==
-                        currentGame.secret_player_id &&
-                    p.guess_confirmed === true
-            ).length;
+        const confirmed =
+            getConfirmedGuessers();
+
+
+        const text =
+            `${confirmed.length} / ${guessers.length}`;
 
 
         const counterIds = [
-            "hostGuessCounter",
-            "hostSecretCounter",
+
+            "waitingCounter",
             "secretWaitingCounter",
-            "waitingCounter"
+            "hostGuessCounter"
+
         ];
 
 
         counterIds.forEach(id => {
 
-            const element =
+            const counter =
                 document.getElementById(id);
 
-
-            if (!element) return;
+            if (!counter) return;
 
 
             const number =
-                element.querySelector(
+                counter.querySelector(
                     ".counter-number"
-                );
-
-
-            const label =
-                element.querySelector(
-                    ".counter-label"
                 );
 
 
             if (number) {
 
                 number.textContent =
-                    `${confirmedGuessers} / ${totalGuessers}`;
-            }
-
-
-            if (label) {
-
-                label.textContent =
-                    confirmedGuessers ===
-                        totalGuessers &&
-                    totalGuessers > 0
-
-                        ? "Alle Antworten sind bestätigt ✓"
-
-                        : "Antworten bestätigt";
+                    text;
             }
 
 
             if (
-                totalGuessers > 0 &&
-                confirmedGuessers ===
-                    totalGuessers
+                confirmed.length ===
+                guessers.length &&
+                guessers.length > 0
             ) {
 
-                element
-                    .classList
-                    .add("ready");
+                counter.classList.add(
+                    "ready"
+                );
 
             } else {
 
-                element
-                    .classList
-                    .remove("ready");
+                counter.classList.remove(
+                    "ready"
+                );
             }
         });
     }
@@ -3222,105 +3588,107 @@ FILME"
 
     function calculateRoundPoints() {
 
+        const points = {};
+
+
+        players.forEach(
+            player => {
+
+                points[player.id] =
+                    0;
+            }
+        );
+
+
+        const secretPlayer =
+            players.find(
+                player =>
+                    player.id ===
+                    currentGame.secret_player_id
+            );
+
+
         const secretNumber =
             Number(
                 currentGame.secret_number
             );
 
 
-        const result = {};
+        let exactCount =
+            0;
+
+        let oneAwayCount =
+            0;
 
 
         players.forEach(
             player => {
 
-                result[player.id] =
-                    0;
+                if (
+                    player.id ===
+                    currentGame.secret_player_id
+                ) {
+
+                    return;
+                }
+
+
+                if (
+                    !player.guess_confirmed ||
+                    player.guess === null ||
+                    player.guess === undefined
+                ) {
+
+                    return;
+                }
+
+
+                const difference =
+                    Math.abs(
+                        Number(player.guess) -
+                        secretNumber
+                    );
+
+
+                if (
+                    difference ===
+                    0
+                ) {
+
+                    points[player.id] =
+                        3;
+
+                    exactCount++;
+
+                } else if (
+                    difference ===
+                    1
+                ) {
+
+                    points[player.id] =
+                        1;
+
+                    oneAwayCount++;
+                }
             }
         );
 
 
-        const guessers =
-            players.filter(
-                p =>
-                    p.id !==
-                    currentGame.secret_player_id
-            );
+        if (secretPlayer) {
 
-
-        let clueGiverPoints = 0;
-
-
-        for (
-            const player of guessers
-        ) {
-
-            if (
-                !player.guess_confirmed ||
-                player.guess === null ||
-                player.guess === undefined
-            ) {
-
-                continue;
-            }
-
-
-            const guess =
-                Number(
-                    player.guess
+            points[
+                secretPlayer.id
+            ] =
+                (
+                    exactCount * 2
+                ) +
+                (
+                    oneAwayCount * 1
                 );
-
-
-            const difference =
-                Math.abs(
-                    guess -
-                    secretNumber
-                );
-
-
-            if (
-                difference === 0
-            ) {
-
-                result[player.id] =
-                    3;
-
-                clueGiverPoints += 2;
-
-            } else if (
-                difference === 1
-            ) {
-
-                result[player.id] =
-                    1;
-
-                clueGiverPoints += 1;
-
-            } else {
-
-                result[player.id] =
-                    0;
-            }
         }
 
 
-        const clueGiver =
-            players.find(
-                p =>
-                    p.id ===
-                    currentGame.secret_player_id
-            );
-
-
-        if (clueGiver) {
-
-            result[clueGiver.id] =
-                (result[clueGiver.id] || 0) +
-                clueGiverPoints;
-        }
-
-
-        return result;
+        return points;
     }
 
 
