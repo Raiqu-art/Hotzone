@@ -1,11 +1,10 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Hotzone</title>
+    <title>HOTZONE</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,6 +22,7 @@
             --muted: #a7adb8;
             --success: #7ee2a8;
             --danger: #ff7373;
+            --warning: #ffd166;
         }
 
         body {
@@ -47,6 +47,31 @@
         textarea,
         select {
             font: inherit;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 14px;
+            padding: 15px 18px;
+            margin-top: 12px;
+            background: white;
+            color: #111;
+            font-weight: 800;
+            cursor: pointer;
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .container {
@@ -180,31 +205,6 @@
             resize: vertical;
         }
 
-        button {
-            width: 100%;
-            border: none;
-            border-radius: 14px;
-            padding: 15px 18px;
-            margin-top: 12px;
-            background: white;
-            color: #111;
-            font-weight: 800;
-            cursor: pointer;
-            transition:
-                transform 0.15s ease,
-                opacity 0.15s ease;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
-        }
-
-        button:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
         .secondary {
             background: #30343c;
             color: white;
@@ -292,6 +292,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            min-width: 0;
         }
 
         .player-number {
@@ -304,16 +305,21 @@
             background: #30343c;
             font-size: 13px;
             font-weight: 800;
+            flex-shrink: 0;
         }
 
         .player-name {
             font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .player-actions {
             display: flex;
             align-items: center;
             gap: 7px;
+            flex-shrink: 0;
         }
 
         .badge {
@@ -527,7 +533,7 @@
         }
 
         .answer-secret {
-            color: #ffd166;
+            color: var(--warning);
             font-size: 12px;
             font-weight: 800;
         }
@@ -603,7 +609,6 @@
         }
 
         @media (max-width: 600px) {
-
             .container {
                 padding: 15px 12px 40px;
             }
@@ -626,15 +631,7 @@
                 text-align: center;
             }
 
-            .answer-row {
-                grid-template-columns:
-                    minmax(0, 1fr)
-                    auto
-                    auto;
-                gap: 7px;
-                padding: 13px 10px;
-            }
-
+            .answer-row,
             .leaderboard-row {
                 grid-template-columns:
                     minmax(0, 1fr)
@@ -662,10 +659,6 @@
                 padding: 11px 10px;
             }
 
-            .player-actions {
-                flex-shrink: 0;
-            }
-
             .kick-button {
                 padding: 7px 8px;
             }
@@ -676,6 +669,8 @@
 <body>
 
 <div class="container">
+
+    <!-- START -->
 
     <div id="startScreen">
 
@@ -804,6 +799,8 @@ FILME"
     </div>
 
 
+    <!-- JOIN -->
+
     <div
         id="joinScreen"
         class="card hidden"
@@ -853,6 +850,8 @@ FILME"
 
     </div>
 
+
+    <!-- LOBBY -->
 
     <div
         id="lobbyScreen"
@@ -925,6 +924,8 @@ FILME"
     </div>
 
 
+    <!-- SECRET PLAYER -->
+
     <div
         id="secretScreen"
         class="card hidden"
@@ -984,6 +985,8 @@ FILME"
     </div>
 
 
+    <!-- SECRET PLAYER WAITING -->
+
     <div
         id="secretWaitingScreen"
         class="card hidden"
@@ -1030,6 +1033,8 @@ FILME"
 
     </div>
 
+
+    <!-- GUESS -->
 
     <div
         id="guessScreen"
@@ -1081,8 +1086,35 @@ FILME"
             Du kannst sie nicht mehr ändern.
         </div>
 
+        <!-- NEU: HOST KANN AUCH ALS RATENDER DIE RUNDE BEENDEN -->
+
+        <div
+            id="hostRevealControls"
+            class="host-panel hidden"
+        >
+
+            <div class="host-title">
+                👑 Host-Steuerung
+            </div>
+
+            <p class="small">
+                Als Host kannst du die Runde beenden und
+                das Ergebnis aufdecken.
+            </p>
+
+            <button
+                class="danger"
+                onclick="revealResult()"
+            >
+                Ergebnis aufdecken
+            </button>
+
+        </div>
+
     </div>
 
+
+    <!-- HOST IS SECRET PLAYER -->
 
     <div
         id="hostSecretScreen"
@@ -1123,9 +1155,7 @@ FILME"
             placeholder="z. B. Ein mittelgroßer Hund..."
         >
 
-        <button
-            onclick="sendClue()"
-        >
+        <button onclick="sendClue()">
             Hinweis absenden
         </button>
 
@@ -1161,6 +1191,8 @@ FILME"
 
     </div>
 
+
+    <!-- WAITING FOR CLUE -->
 
     <div
         id="waitingScreen"
@@ -1209,6 +1241,8 @@ FILME"
     </div>
 
 
+    <!-- RESULT -->
+
     <div
         id="resultScreen"
         class="card hidden"
@@ -1242,28 +1276,21 @@ FILME"
 
         </div>
 
-
         <div class="section-heading">
-
             <h3>
                 Zwischenübersicht
             </h3>
-
         </div>
 
         <div id="answerOverview"></div>
 
-
         <div class="section-heading">
-
             <h3>
                 Gesamtpunktestand
             </h3>
-
         </div>
 
         <div id="leaderboard"></div>
-
 
         <div
             id="hostNextRoundControls"
@@ -1317,7 +1344,7 @@ FILME"
 
     /* ==========================================
        SUPABASE
-    =========================================== */
+    ========================================== */
 
     const SUPABASE_URL =
         "https://odjomemslreozqtsaubk.supabase.co";
@@ -1347,6 +1374,8 @@ FILME"
     let selectedGuess = null;
 
     let roundPoints = {};
+
+    let joinCooldown = false;
 
 
     /* ==========================================
@@ -1420,7 +1449,7 @@ FILME"
 
     /* ==========================================
        GAME CODE
-    =========================================== */
+    ========================================== */
 
     function generateGameCode() {
 
@@ -1492,7 +1521,7 @@ FILME"
 
     /* ==========================================
        CREATE GAME
-    =========================================== */
+    ========================================== */
 
     async function createGame() {
 
@@ -1540,10 +1569,8 @@ FILME"
         categories =
             [...new Set(categories)];
 
-
         let code =
             generateGameCode();
-
 
         let gameExists = true;
 
@@ -1567,7 +1594,6 @@ FILME"
                     generateGameCode();
             }
         }
-
 
         const {
             error: gameError
@@ -1600,6 +1626,11 @@ FILME"
                     category:
                         "",
 
+                    /*
+                     * NICHT null:
+                     * Die Spalte secret_number
+                     * ist in deiner DB NOT NULL.
+                     */
                     secret_number:
                         0,
 
@@ -1691,10 +1722,7 @@ FILME"
 
     /* ==========================================
        JOIN GAME
-    =========================================== */
-
-    let joinCooldown = false;
-
+    ========================================== */
 
     async function joinGame() {
 
@@ -1703,12 +1731,10 @@ FILME"
         joinCooldown =
             true;
 
-
         const joinButton =
             document.getElementById(
                 "joinButton"
             );
-
 
         if (joinButton) {
 
@@ -1718,7 +1744,6 @@ FILME"
             joinButton.textContent =
                 "Beitreten...";
         }
-
 
         setTimeout(() => {
 
@@ -1905,12 +1930,11 @@ FILME"
 
     /* ==========================================
        LOAD GAME
-    =========================================== */
+    ========================================== */
 
     async function loadGame() {
 
         if (!gameId) return;
-
 
         const {
             data,
@@ -1940,13 +1964,93 @@ FILME"
 
 
     /* ==========================================
+       LOAD PLAYERS
+    ========================================== */
+
+    async function loadPlayers() {
+
+        if (!gameId) return;
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("players")
+                .select("*")
+                .eq("game_id", gameId)
+                .order("created_at", {
+                    ascending: true
+                });
+
+
+        if (error) {
+
+            console.error(error);
+
+            return;
+        }
+
+
+        const oldPlayerIds =
+            players.map(
+                player => player.id
+            );
+
+        const newPlayers =
+            data || [];
+
+
+        if (
+            playerId &&
+            oldPlayerIds.includes(playerId) &&
+            !newPlayers.some(
+                player =>
+                    player.id === playerId
+            )
+        ) {
+
+            alert(
+                "Du wurdest aus der Lobby gekickt."
+            );
+
+            gameId =
+                null;
+
+            playerId =
+                null;
+
+            isHost =
+                false;
+
+            currentGame =
+                null;
+
+            players =
+                [];
+
+            showStartScreen();
+
+            return;
+        }
+
+
+        players =
+            newPlayers;
+
+
+        renderLobby();
+        updateCounters();
+    }
+
+
+    /* ==========================================
        REALTIME
-    =========================================== */
+    ========================================== */
 
     function subscribeToGame() {
 
         if (!gameId) return;
-
 
         supabaseClient
             .channel(
@@ -1967,8 +2071,11 @@ FILME"
                 },
                 async payload => {
 
-                    currentGame =
-                        payload.new;
+                    if (payload.new) {
+
+                        currentGame =
+                            payload.new;
+                    }
 
                     await loadPlayers();
 
@@ -1998,167 +2105,130 @@ FILME"
 
 
     /* ==========================================
-       LOAD PLAYERS
-    =========================================== */
+       RENDER CURRENT PHASE
+    ========================================== */
 
-    async function loadPlayers() {
+    function renderCurrentPhase() {
 
-        if (!gameId) return;
+        if (!currentGame) return;
 
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
-                .from("players")
-                .select("*")
-                .eq("game_id", gameId)
-                .order(
-                    "created_at",
-                    {
-                        ascending: true
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            return;
-        }
-
-
-        players =
-            data || [];
-
-
-        /*
-         * Wenn ein Spieler aus der Lobby gekickt wurde,
-         * existiert sein Eintrag nicht mehr.
-         */
-        if (
-            playerId &&
-            !isHost &&
-            !players.some(
-                player =>
-                    player.id === playerId
-            )
+        switch (
+            currentGame.phase
         ) {
 
-            alert(
-                "Du wurdest aus der Lobby gekickt."
-            );
+            case "waiting":
+                showLobby();
+                break;
 
-            gameId =
-                null;
+            case "clue":
+                showCluePhase();
+                break;
 
-            playerId =
-                null;
+            case "guess":
+                showGuessPhase();
+                break;
 
-            currentGame =
-                null;
+            case "result":
+                showResult();
+                break;
 
-            players =
-                [];
-
-            roundPoints =
-                {};
-
-            selectedGuess =
-                null;
-
-            isHost =
-                false;
-
-            showStartScreen();
-
-            return;
+            default:
+                showLobby();
         }
-
-
-        renderLobby();
-
-        updateCounters();
     }
 
 
     /* ==========================================
        LOBBY
-    =========================================== */
+    ========================================== */
 
     function renderLobby() {
 
         if (!currentGame) return;
 
+        const lobby =
+            document.getElementById(
+                "lobbyScreen"
+            );
 
-        const list =
-            document
-                .getElementById(
-                    "playerList"
-                );
-
-
-        if (!list) return;
+        if (!lobby) return;
 
 
-        list.innerHTML = "";
+        document
+            .getElementById(
+                "gameCodeDisplay"
+            )
+            .textContent =
+            gameId || "";
+
+
+        document
+            .getElementById(
+                "roundLobbyInfo"
+            )
+            .textContent =
+            `Runden: ${currentGame.total_rounds}`;
+
+
+        const playerList =
+            document.getElementById(
+                "playerList"
+            );
+
+        if (!playerList) return;
+
+
+        playerList.innerHTML =
+            "";
 
 
         players.forEach(
             (player, index) => {
 
-                const div =
+                const row =
                     document.createElement(
                         "div"
                     );
 
-
-                div.className =
+                row.className =
                     "player";
 
 
-                const playerLeft =
+                const left =
                     document.createElement(
                         "div"
                     );
 
-                playerLeft.className =
+                left.className =
                     "player-left";
 
 
-                const playerNumber =
+                const number =
                     document.createElement(
                         "div"
                     );
 
-                playerNumber.className =
+                number.className =
                     "player-number";
 
-                playerNumber.textContent =
+                number.textContent =
                     index + 1;
 
 
-                const playerName =
+                const name =
                     document.createElement(
-                        "span"
+                        "div"
                     );
 
-                playerName.className =
+                name.className =
                     "player-name";
 
-                playerName.textContent =
+                name.textContent =
                     player.name;
 
 
-                playerLeft.appendChild(
-                    playerNumber
-                );
-
-                playerLeft.appendChild(
-                    playerName
-                );
+                left.appendChild(number);
+                left.appendChild(name);
 
 
                 const actions =
@@ -2177,7 +2247,7 @@ FILME"
 
                     const badge =
                         document.createElement(
-                            "span"
+                            "div"
                         );
 
                     badge.className =
@@ -2195,84 +2265,58 @@ FILME"
                 if (
                     isHost &&
                     player.id !== playerId &&
-                    currentGame.phase ===
-                        "waiting"
+                    currentGame.phase === "waiting"
                 ) {
 
-                    const kickButton =
+                    const kick =
                         document.createElement(
                             "button"
                         );
 
-                    kickButton.className =
+                    kick.className =
                         "kick-button";
 
-                    kickButton.textContent =
+                    kick.textContent =
                         "Kicken";
 
-                    kickButton.onclick =
-                        () => kickPlayer(
-                            player.id
-                        );
+                    kick.onclick =
+                        () =>
+                            kickPlayer(
+                                player.id
+                            );
 
                     actions.appendChild(
-                        kickButton
+                        kick
                     );
                 }
 
 
-                div.appendChild(
-                    playerLeft
-                );
+                row.appendChild(left);
+                row.appendChild(actions);
 
-                div.appendChild(
-                    actions
-                );
-
-
-                list.appendChild(
-                    div
-                );
+                playerList.appendChild(row);
             }
         );
 
 
-        document
-            .getElementById(
-                "gameCodeDisplay"
-            )
-            .textContent =
-            gameId;
-
-
-        document
-            .getElementById(
-                "roundLobbyInfo"
-            )
-            .textContent =
-            `${currentGame.total_rounds} Runden`;
-
-
-        const controls =
-            document
-                .getElementById(
-                    "hostLobbyControls"
-                );
+        const hostControls =
+            document.getElementById(
+                "hostLobbyControls"
+            );
 
 
         if (
-            isHost &&
-            currentGame.phase ===
-                "waiting"
+            hostControls &&
+            isHost
         ) {
 
-            controls
+            hostControls
                 .classList
                 .remove("hidden");
 
-        } else {
+        } else if (hostControls) {
 
-            controls
+            hostControls
                 .classList
                 .add("hidden");
         }
@@ -2281,7 +2325,7 @@ FILME"
 
     /* ==========================================
        KICK PLAYER
-    =========================================== */
+    ========================================== */
 
     async function kickPlayer(
         targetPlayerId
@@ -2290,25 +2334,22 @@ FILME"
         if (!isHost) return;
 
         if (
-            currentGame &&
+            !currentGame ||
             currentGame.phase !==
-                "waiting"
+            "waiting"
         ) {
-
             return;
         }
-
 
         if (
             targetPlayerId ===
             playerId
         ) {
-
             return;
         }
 
 
-        const targetPlayer =
+        const target =
             players.find(
                 player =>
                     player.id ===
@@ -2316,40 +2357,20 @@ FILME"
             );
 
 
-        if (!targetPlayer) return;
+        if (!target) return;
 
 
         const confirmed =
             confirm(
-                `Möchtest du ${targetPlayer.name} wirklich aus der Lobby kicken?`
+                `${target.name} wirklich aus der Lobby kicken?`
             );
 
 
         if (!confirmed) return;
 
 
-        /*
-         * Den Spieler auch aus der bisherigen
-         * Hinweisgeber-Rotation entfernen.
-         */
-        const usedSecretPlayers =
-            Array.isArray(
-                currentGame.used_secret_players
-            )
-                ? currentGame.used_secret_players
-                : [];
-
-
-        const cleanedUsedSecretPlayers =
-            usedSecretPlayers.filter(
-                id =>
-                    id !==
-                    targetPlayerId
-            );
-
-
         const {
-            error: deleteError
+            error
         } =
             await supabaseClient
                 .from("players")
@@ -2357,120 +2378,64 @@ FILME"
                 .eq(
                     "id",
                     targetPlayerId
-                )
-                .eq(
-                    "game_id",
-                    gameId
                 );
 
 
-        if (deleteError) {
+        if (error) {
 
-            console.error(
-                deleteError
-            );
+            console.error(error);
 
             alert(
-                "Der Spieler konnte nicht gekickt werden: " +
-                deleteError.message
+                "Spieler konnte nicht gekickt werden: " +
+                error.message
             );
 
             return;
         }
 
 
-        const {
-            error: updateError
-        } =
-            await supabaseClient
-                .from("games")
-                .update({
-
-                    used_secret_players:
-                        cleanedUsedSecretPlayers
-
-                })
-                .eq(
-                    "id",
-                    gameId
-                );
+        const used =
+            Array.isArray(
+                currentGame.used_secret_players
+            )
+                ? currentGame.used_secret_players
+                : [];
 
 
-        if (updateError) {
-
-            console.error(
-                updateError
+        const newUsed =
+            used.filter(
+                id =>
+                    id !==
+                    targetPlayerId
             );
-        }
 
 
+        await supabaseClient
+            .from("games")
+            .update({
+                used_secret_players:
+                    newUsed
+            })
+            .eq(
+                "id",
+                gameId
+            );
+
+
+        await loadGame();
         await loadPlayers();
-    }
-
-
-    /* ==========================================
-       CURRENT PHASE
-    =========================================== */
-
-    function renderCurrentPhase() {
-
-        if (!currentGame) return;
-
-
-        if (
-            currentGame.phase ===
-            "waiting"
-        ) {
-
-            showLobby();
-
-            return;
-        }
-
-
-        if (
-            currentGame.phase ===
-            "clue"
-        ) {
-
-            showCluePhase();
-
-            return;
-        }
-
-
-        if (
-            currentGame.phase ===
-            "guess"
-        ) {
-
-            showGuessPhase();
-
-            return;
-        }
-
-
-        if (
-            currentGame.phase ===
-            "result"
-        ) {
-
-            showResult();
-
-            return;
-        }
+        renderLobby();
     }
 
 
     /* ==========================================
        SECRET PLAYER LABEL
-    =========================================== */
+    ========================================== */
 
     function getSecretPlayerName() {
 
         if (!currentGame) {
-
-            return "Unbekannt";
+            return "";
         }
 
 
@@ -2482,24 +2447,17 @@ FILME"
             );
 
 
-        if (!secretPlayer) {
-
-            return "Unbekannt";
-        }
-
-
-        return secretPlayer.name;
+        return secretPlayer
+            ? secretPlayer.name
+            : "Unbekannt";
     }
 
 
     function updateSecretPlayerLabels() {
 
-        const name =
+        const text =
+            "👤 Geheime Person / Hinweisgeber: " +
             getSecretPlayerName();
-
-
-        const label =
-            `👤 Geheime Person / Hinweisgeber: ${name}`;
 
 
         const ids = [
@@ -2521,7 +2479,7 @@ FILME"
             if (element) {
 
                 element.textContent =
-                    label;
+                    text;
             }
         });
     }
@@ -2529,19 +2487,33 @@ FILME"
 
     /* ==========================================
        START ROUND
-    =========================================== */
+    ========================================== */
 
     async function startRound() {
 
         if (!isHost) return;
 
+        if (!currentGame) return;
 
         if (
-            players.length < 2
+            currentGame.phase !==
+            "waiting"
+        ) {
+            return;
+        }
+
+
+        const activePlayers =
+            [...players];
+
+
+        if (
+            activePlayers.length <
+            1
         ) {
 
             alert(
-                "Es müssen mindestens 2 Spieler im Spiel sein."
+                "Es muss mindestens ein Spieler im Spiel sein."
             );
 
             return;
@@ -2553,15 +2525,21 @@ FILME"
                 currentGame.categories
             )
                 ? currentGame.categories
-                : [
-                    "ATTRAKTIVITÄT"
-                ];
+                : [];
 
 
-        /*
-         * Jede Kategorie soll pro Durchlauf
-         * genau einmal verwendet werden.
-         */
+        if (
+            categories.length ===
+            0
+        ) {
+
+            alert(
+                "Es gibt keine Kategorien."
+            );
+
+            return;
+        }
+
 
         let usedCategories =
             Array.isArray(
@@ -2580,16 +2558,6 @@ FILME"
             );
 
 
-        if (
-            usedCategories.length >=
-            categories.length
-        ) {
-
-            usedCategories =
-                [];
-        }
-
-
         let availableCategories =
             categories.filter(
                 category =>
@@ -2600,18 +2568,19 @@ FILME"
 
 
         if (
-            availableCategories.length === 0
+            availableCategories.length ===
+            0
         ) {
 
             usedCategories =
                 [];
 
             availableCategories =
-                categories;
+                [...categories];
         }
 
 
-        const randomCategory =
+        const category =
             availableCategories[
                 Math.floor(
                     Math.random() *
@@ -2623,18 +2592,9 @@ FILME"
         const newUsedCategories =
             [
                 ...usedCategories,
-                randomCategory
+                category
             ];
 
-
-        /*
-         * HINWEISGEBER-ROTATION
-         *
-         * Ein Spieler darf erst wieder
-         * Hinweisgeber sein, wenn alle anderen
-         * aktuellen Spieler ebenfalls einmal
-         * Hinweisgeber waren.
-         */
 
         let usedSecretPlayers =
             Array.isArray(
@@ -2644,43 +2604,22 @@ FILME"
                 : [];
 
 
-        const currentPlayerIds =
-            players.map(
+        const activeIds =
+            activePlayers.map(
                 player =>
                     player.id
             );
 
 
-        /*
-         * Spieler entfernen, die nicht mehr
-         * in der Lobby sind.
-         */
         usedSecretPlayers =
             usedSecretPlayers.filter(
                 id =>
-                    currentPlayerIds.includes(
-                        id
-                    )
+                    activeIds.includes(id)
             );
 
 
-        /*
-         * Wenn alle aktuellen Spieler einmal
-         * Hinweisgeber waren, startet ein
-         * neuer Durchlauf.
-         */
-        if (
-            usedSecretPlayers.length >=
-            players.length
-        ) {
-
-            usedSecretPlayers =
-                [];
-        }
-
-
         let availableSecretPlayers =
-            players.filter(
+            activePlayers.filter(
                 player =>
                     !usedSecretPlayers.includes(
                         player.id
@@ -2688,34 +2627,25 @@ FILME"
             );
 
 
-        /*
-         * Sicherheitsfallback.
-         */
         if (
-            availableSecretPlayers.length === 0
+            availableSecretPlayers.length ===
+            0
         ) {
 
             usedSecretPlayers =
                 [];
 
             availableSecretPlayers =
-                players;
+                [...activePlayers];
         }
 
 
-        const randomPlayer =
+        const secretPlayer =
             availableSecretPlayers[
                 Math.floor(
                     Math.random() *
                     availableSecretPlayers.length
                 )
-            ];
-
-
-        const newUsedSecretPlayers =
-            [
-                ...usedSecretPlayers,
-                randomPlayer.id
             ];
 
 
@@ -2725,20 +2655,73 @@ FILME"
             ) + 1;
 
 
-        const nextRound =
-            (
-                currentGame.current_round ||
-                0
-            ) + 1;
+        const newUsedSecretPlayers =
+            [
+                ...usedSecretPlayers,
+                secretPlayer.id
+            ];
 
 
-        selectedGuess =
-            null;
+        const {
+            error
+        } =
+            await supabaseClient
+                .from("games")
+                .update({
+
+                    current_round:
+                        currentGame.current_round + 1,
+
+                    phase:
+                        "clue",
+
+                    category:
+                        category,
+
+                    used_categories:
+                        newUsedCategories,
+
+                    used_secret_players:
+                        newUsedSecretPlayers,
+
+                    secret_number:
+                        randomNumber,
+
+                    secret_player_id:
+                        secretPlayer.id,
+
+                    clue:
+                        ""
+
+                })
+                .eq(
+                    "id",
+                    gameId
+                );
 
 
-        roundPoints =
-            {};
+        if (error) {
 
+            console.error(error);
+
+            alert(
+                "Fehler beim Starten der Runde: " +
+                error.message
+            );
+
+            return;
+        }
+
+
+        await resetGuesses();
+    }
+
+
+    /* ==========================================
+       RESET GUESSES
+    ========================================== */
+
+    async function resetGuesses() {
 
         await supabaseClient
             .from("players")
@@ -2757,62 +2740,21 @@ FILME"
             );
 
 
-        const {
-            error
-        } =
-            await supabaseClient
-                .from("games")
-                .update({
+        selectedGuess =
+            null;
 
-                    category:
-                        randomCategory,
+        roundPoints =
+            {};
 
-                    categories:
-                        categories,
-
-                    used_categories:
-                        newUsedCategories,
-
-                    used_secret_players:
-                        newUsedSecretPlayers,
-
-                    secret_number:
-                        randomNumber,
-
-                    secret_player_id:
-                        randomPlayer.id,
-
-                    clue:
-                        "",
-
-                    phase:
-                        "clue",
-
-                    current_round:
-                        nextRound
-
-                })
-                .eq(
-                    "id",
-                    gameId
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            alert(
-                "Fehler beim Starten der Runde: " +
-                error.message
-            );
-        }
+        await loadGame();
+        await loadPlayers();
+        renderCurrentPhase();
     }
 
 
     /* ==========================================
        CLUE PHASE
-    =========================================== */
+    ========================================== */
 
     function showCluePhase() {
 
@@ -2821,16 +2763,46 @@ FILME"
         updateSecretPlayerLabels();
 
 
-        const secretPlayer =
+        const isSecretPlayer =
             currentGame.secret_player_id ===
             playerId;
 
 
-        if (secretPlayer) {
+        if (isSecretPlayer) {
 
             if (isHost) {
 
-                showHostSecretScreen();
+                document
+                    .getElementById(
+                        "hostSecretScreen"
+                    )
+                    .classList
+                    .remove("hidden");
+
+
+                document
+                    .getElementById(
+                        "hostSecretRoundInfo"
+                    )
+                    .textContent =
+                    `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+
+
+                document
+                    .getElementById(
+                        "hostSecretCategory"
+                    )
+                    .textContent =
+                    currentGame.category;
+
+
+                document
+                    .getElementById(
+                        "hostSecretNumber"
+                    )
+                    .textContent =
+                    currentGame.secret_number;
+
 
             } else {
 
@@ -2844,10 +2816,10 @@ FILME"
 
                 document
                     .getElementById(
-                        "secretNumberDisplay"
+                        "secretRoundInfo"
                     )
                     .textContent =
-                    currentGame.secret_number;
+                    `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
 
 
                 document
@@ -2860,57 +2832,19 @@ FILME"
 
                 document
                     .getElementById(
-                        "secretRoundInfo"
+                        "secretNumberDisplay"
                     )
                     .textContent =
-                    `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
+                    currentGame.secret_number;
             }
 
-        } else {
-
-            document
-                .getElementById(
-                    "waitingScreen"
-                )
-                .classList
-                .remove("hidden");
-
-
-            document
-                .getElementById(
-                    "waitingRoundInfo"
-                )
-                .textContent =
-                `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
-
-
-            document
-                .getElementById(
-                    "waitingCategory"
-                )
-                .textContent =
-                currentGame.category;
-
-
-            updateCounters();
+            return;
         }
-    }
-
-
-    /* ==========================================
-       HOST SECRET
-    =========================================== */
-
-    function showHostSecretScreen() {
-
-        hideAllScreens();
-
-        updateSecretPlayerLabels();
 
 
         document
             .getElementById(
-                "hostSecretScreen"
+                "waitingScreen"
             )
             .classList
             .remove("hidden");
@@ -2918,66 +2852,18 @@ FILME"
 
         document
             .getElementById(
-                "hostSecretNumber"
-            )
-            .textContent =
-            currentGame.secret_number;
-
-
-        document
-            .getElementById(
-                "hostSecretCategory"
-            )
-            .textContent =
-            currentGame.category;
-
-
-        document
-            .getElementById(
-                "hostSecretRoundInfo"
+                "waitingRoundInfo"
             )
             .textContent =
             `Runde ${currentGame.current_round} / ${currentGame.total_rounds}`;
 
 
-        const clueSent =
-            currentGame.clue &&
-            currentGame.clue.trim().length > 0;
-
-
-        if (clueSent) {
-
-            document
-                .getElementById(
-                    "hostClueInput"
-                )
-                .value =
-                currentGame.clue;
-
-
-            document
-                .getElementById(
-                    "hostClueSentMessage"
-                )
-                .classList
-                .remove("hidden");
-
-        } else {
-
-            document
-                .getElementById(
-                    "hostClueInput"
-                )
-                .value =
-                "";
-
-            document
-                .getElementById(
-                    "hostClueSentMessage"
-                )
-                .classList
-                .add("hidden");
-        }
+        document
+            .getElementById(
+                "waitingCategory"
+            )
+            .textContent =
+            currentGame.category;
 
 
         updateCounters();
@@ -2986,18 +2872,19 @@ FILME"
 
     /* ==========================================
        SEND CLUE
-    =========================================== */
+    ========================================== */
 
     async function sendClue() {
 
         if (!currentGame) return;
 
 
-        if (
-            currentGame.secret_player_id !==
-            playerId
-        ) {
+        const isSecretPlayer =
+            currentGame.secret_player_id ===
+            playerId;
 
+
+        if (!isSecretPlayer) {
             return;
         }
 
@@ -3082,7 +2969,7 @@ FILME"
 
     /* ==========================================
        GUESS PHASE
-    =========================================== */
+    ========================================== */
 
     function showGuessPhase() {
 
@@ -3143,6 +3030,23 @@ FILME"
             .remove("hidden");
 
 
+        const hostRevealControls =
+            document.getElementById(
+                "hostRevealControls"
+            );
+
+
+        if (hostRevealControls) {
+
+            hostRevealControls
+                .classList
+                .toggle(
+                    "hidden",
+                    !isHost
+                );
+        }
+
+
         document
             .getElementById(
                 "guessRoundInfo"
@@ -3191,6 +3095,7 @@ FILME"
                 .classList
                 .remove("hidden");
 
+
             document
                 .getElementById(
                     "confirmGuessButton"
@@ -3207,6 +3112,7 @@ FILME"
                 .classList
                 .add("hidden");
 
+
             document
                 .getElementById(
                     "confirmGuessButton"
@@ -3222,7 +3128,7 @@ FILME"
 
     /* ==========================================
        HOST SECRET GUESS PHASE
-    =========================================== */
+    ========================================== */
 
     function showHostSecretGuessPhase() {
 
@@ -3293,7 +3199,7 @@ FILME"
 
     /* ==========================================
        NUMBER GRID
-    =========================================== */
+    ========================================== */
 
     function renderNumberGrid() {
 
@@ -3339,9 +3245,10 @@ FILME"
 
 
             button.onclick =
-                () => selectGuess(
-                    number
-                );
+                () =>
+                    selectGuess(
+                        number
+                    );
 
 
             const me =
@@ -3406,7 +3313,7 @@ FILME"
 
     /* ==========================================
        CONFIRM GUESS
-    =========================================== */
+    ========================================== */
 
     async function confirmGuess() {
 
@@ -3487,16 +3394,20 @@ FILME"
 
         renderNumberGrid();
 
-
         await loadPlayers();
     }
 
 
     /* ==========================================
        COUNTERS
-    =========================================== */
+    ========================================== */
 
     function getGuessers() {
+
+        if (!currentGame) {
+            return [];
+        }
+
 
         return players.filter(
             player =>
@@ -3584,7 +3495,7 @@ FILME"
 
     /* ==========================================
        CALCULATE ROUND POINTS
-    =========================================== */
+    ========================================== */
 
     function calculateRoundPoints() {
 
@@ -3683,7 +3594,7 @@ FILME"
                     exactCount * 2
                 ) +
                 (
-                    oneAwayCount * 1
+                    oneAwayCount
                 );
         }
 
@@ -3694,11 +3605,33 @@ FILME"
 
     /* ==========================================
        REVEAL RESULT
-    =========================================== */
+    ========================================== */
 
     async function revealResult() {
 
         if (!isHost) return;
+
+
+        /*
+         * Wichtig:
+         * Wir laden das Spiel zuerst neu.
+         * Dadurch verhindert ein alter
+         * currentGame-Zustand, dass der Host
+         * nicht auf "Ergebnis aufdecken"
+         * drücken kann.
+         */
+
+        await loadGame();
+
+
+        if (!currentGame) {
+
+            alert(
+                "Das Spiel konnte nicht geladen werden."
+            );
+
+            return;
+        }
 
 
         if (
@@ -3738,18 +3671,30 @@ FILME"
                 points;
 
 
-            await supabaseClient
-                .from("players")
-                .update({
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from("players")
+                    .update({
 
-                    score:
-                        newScore
+                        score:
+                            newScore
 
-                })
-                .eq(
-                    "id",
-                    player.id
+                    })
+                    .eq(
+                        "id",
+                        player.id
+                    );
+
+
+            if (error) {
+
+                console.error(
+                    "Score-Fehler:",
+                    error
                 );
+            }
         }
 
 
@@ -3775,20 +3720,25 @@ FILME"
             console.error(error);
 
             alert(
-                "Fehler beim Anzeigen des Ergebnisses."
+                "Fehler beim Anzeigen des Ergebnisses: " +
+                error.message
             );
 
             return;
         }
 
 
+        await loadGame();
+
         await loadPlayers();
+
+        renderCurrentPhase();
     }
 
 
     /* ==========================================
        ANSWER OVERVIEW
-    =========================================== */
+    ========================================== */
 
     function renderAnswerOverview() {
 
@@ -3798,7 +3748,8 @@ FILME"
             );
 
 
-        container.innerHTML = "";
+        container.innerHTML =
+            "";
 
 
         const secretNumber =
@@ -3807,11 +3758,7 @@ FILME"
             );
 
 
-        const rankingPlayers =
-            [...players];
-
-
-        rankingPlayers.forEach(
+        players.forEach(
             player => {
 
                 const row =
@@ -3867,9 +3814,11 @@ FILME"
 
                 const label =
                     isClueGiver
-                        ? `<div class="answer-secret">
-                               HINWEISGEBER
-                           </div>`
+                        ? `
+                            <div class="answer-secret">
+                                HINWEISGEBER
+                            </div>
+                          `
                         : "";
 
 
@@ -3896,7 +3845,9 @@ FILME"
                 `;
 
 
-                container.appendChild(row);
+                container.appendChild(
+                    row
+                );
             }
         );
     }
@@ -3904,9 +3855,9 @@ FILME"
 
     /* ==========================================
        RESULT SCREEN
-    =========================================== */
+    ========================================== */
 
-    async function showResult() {
+    function showResult() {
 
         hideAllScreens();
 
@@ -4020,7 +3971,7 @@ FILME"
 
     /* ==========================================
        LEADERBOARD
-    =========================================== */
+    ========================================== */
 
     function renderLeaderboard() {
 
@@ -4030,7 +3981,8 @@ FILME"
             );
 
 
-        container.innerHTML = "";
+        container.innerHTML =
+            "";
 
 
         const ranking =
@@ -4095,7 +4047,9 @@ FILME"
                 `;
 
 
-                container.appendChild(row);
+                container.appendChild(
+                    row
+                );
             }
         );
     }
@@ -4103,7 +4057,7 @@ FILME"
 
     /* ==========================================
        NEXT ROUND
-    =========================================== */
+    ========================================== */
 
     async function nextRound() {
 
@@ -4111,6 +4065,7 @@ FILME"
 
 
         if (
+            !currentGame ||
             currentGame.current_round >=
             currentGame.total_rounds
         ) {
@@ -4152,15 +4107,25 @@ FILME"
             console.error(error);
 
             alert(
-                "Fehler beim Start der nächsten Runde."
+                "Fehler beim Start der nächsten Runde: " +
+                error.message
             );
+
+            return;
         }
+
+
+        await loadGame();
+
+        await loadPlayers();
+
+        renderCurrentPhase();
     }
 
 
     /* ==========================================
        ESCAPE HTML
-    =========================================== */
+    ========================================== */
 
     function escapeHtml(text) {
 
@@ -4180,13 +4145,15 @@ FILME"
 
     /* ==========================================
        BACKUP REFRESH
-    =========================================== */
+    ========================================== */
 
     setInterval(
         async () => {
 
             if (!gameId) return;
 
+
+            await loadGame();
 
             await loadPlayers();
 
@@ -4200,8 +4167,14 @@ FILME"
         2000
     );
 
+
+    /* ==========================================
+       START
+    ========================================== */
+
+    showStartScreen();
+
 </script>
 
 </body>
 </html>
-```
